@@ -1,0 +1,17 @@
+version: '3.9'
+
+services:
+
+  mysql:
+    image: mysql:8.1
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - 3307:3306
+    environment:
+      MYSQL_DATABASE: ipanemabox
+      MYSQL_ROOT_PASSWORD: RO01_S3cRe1
+      MYSQL_USER: user_admin
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}

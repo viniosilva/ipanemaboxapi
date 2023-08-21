@@ -1,0 +1,203 @@
+definitions:
+  model.HealthCheckStatus:
+    enum:
+    - up
+    - down
+    type: string
+    x-enum-varnames:
+    - HealthCheckStatusUp
+    - HealthCheckStatusDown
+  presenter.CustomerDataRequest:
+    properties:
+      email:
+        example: mimoso@ipanemabox.com
+        type: string
+      fullname:
+        example: Mimoso Silva
+        type: string
+    type: object
+  presenter.CustomerResponseData:
+    properties:
+      created_at:
+        example: "2000-12-31 23:59:59"
+        type: string
+      email:
+        example: mimoso@ipanemabox.com
+        type: string
+      fullname:
+        example: Mimoso Silva
+        type: string
+      id:
+        example: 1
+        type: integer
+      updated_at:
+        example: "2000-12-31 23:59:59"
+        type: string
+    type: object
+  presenter.CustomersResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/presenter.CustomerResponseData'
+        type: array
+    type: object
+  presenter.ErrorResponse:
+    properties:
+      error:
+        example: Not Found
+        type: string
+      message:
+        example: customer not found
+        type: string
+      messages:
+        example:
+        - invalid field
+        - invalid value
+        items:
+          type: string
+        type: array
+    type: object
+  presenter.HealthCheckResponse:
+    properties:
+      status:
+        allOf:
+        - $ref: '#/definitions/model.HealthCheckStatus'
+        example: down
+    type: object
+info:
+  contact: {}
+paths:
+  /healthcheck:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presenter.HealthCheckResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/presenter.HealthCheckResponse'
+      summary: healthcheck
+      tags:
+      - health
+  /v1/customers:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presenter.CustomersResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/presenter.ErrorResponse'
+      summary: find customers
+      tags:
+      - customers
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Customer
+        in: body
+        name: customer
+        required: true
+        schema:
+          $ref: '#/definitions/presenter.CustomerDataRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/presenter.CustomerResponseData'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/presenter.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/presenter.ErrorResponse'
+      summary: create customer
+      tags:
+      - customers
+  /v1/customers/{customer_id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: customer_id
+        in: path
+        name: customer_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presenter.CustomerResponseData'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/presenter.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/presenter.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/presenter.ErrorResponse'
+      summary: find customer by id
+      tags:
+      - customers
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: customer_id
+        in: path
+        name: customer_id
+        required: true
+        type: integer
+      - description: Customer
+        in: body
+        name: customer
+        required: true
+        schema:
+          $ref: '#/definitions/presenter.CustomerDataRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presenter.CustomerResponseData'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/presenter.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/presenter.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/presenter.ErrorResponse'
+      summary: update customer
+      tags:
+      - customers
+swagger: "2.0"
