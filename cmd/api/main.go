@@ -32,6 +32,7 @@ func main() {
 
 	router := gin.Default()
 	router.GET("/api/healthcheck", factory.HealthCheckController.Check)
+	router.POST("/api/v1/customers", factory.CustomerController.Create)
 
 	srv := &http.Server{
 		Addr:    fmt.Sprintf("%s:%s", *host, *port),

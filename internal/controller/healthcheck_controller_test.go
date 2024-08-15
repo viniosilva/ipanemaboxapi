@@ -8,7 +8,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"github.com/viniosilva/ipanemaboxapi/internal/controller/presenter"
 )
 
@@ -20,12 +19,12 @@ func TestNewHealthCheckController(t *testing.T) {
 
 func TestHealthCheckController_Check(t *testing.T) {
 	tests := map[string]struct {
-		want       presenter.HealthCheckRes
 		wantStatus int
+		want       presenter.HealthCheckRes
 	}{
 		"should be successful": {
-			want:       presenter.HealthCheckRes{Status: presenter.HealthCheckStatusUp},
 			wantStatus: http.StatusOK,
+			want:       presenter.HealthCheckRes{Status: presenter.HealthCheckStatusUp},
 		},
 	}
 	for name, tt := range tests {
@@ -39,11 +38,10 @@ func TestHealthCheckController_Check(t *testing.T) {
 			r.ServeHTTP(w, req)
 
 			var body presenter.HealthCheckRes
-			err := json.Unmarshal(w.Body.Bytes(), &body)
-			require.Nil(t, err)
+			json.Unmarshal(w.Body.Bytes(), &body)
 
-			assert.Equal(t, tt.want, body)
 			assert.Equal(t, tt.wantStatus, w.Code)
+			assert.Equal(t, tt.want, body)
 		})
 	}
 }
