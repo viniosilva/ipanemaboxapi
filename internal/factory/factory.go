@@ -1,6 +1,9 @@
 package factory
 
-import "github.com/viniosilva/ipanemaboxapi/internal/controller"
+import (
+	"github.com/viniosilva/ipanemaboxapi/internal/controller"
+	"github.com/viniosilva/ipanemaboxapi/internal/service"
+)
 
 type Factory struct {
 	HealthCheckController *controller.HealthCheckController
@@ -8,8 +11,10 @@ type Factory struct {
 }
 
 func Build() Factory {
+	customerSvc := service.NewCustomerService()
+
 	return Factory{
 		HealthCheckController: controller.NewHealthCheckController(),
-		CustomerController:    controller.NewCustomerController(),
+		CustomerController:    controller.NewCustomerController(customerSvc),
 	}
 }
