@@ -16,6 +16,20 @@ Install dependencies
   make
 ```
 
+Configure infrastructure
+
+```bash
+make infra/up
+make db/migrate
+```
+
+Configure test infrastructure
+
+```bash
+make infra/test/up
+make db/test/migrate
+```
+
 Start the server
 
 ```bash

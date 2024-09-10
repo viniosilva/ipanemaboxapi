@@ -7,15 +7,21 @@ import (
 	"github.com/viniosilva/ipanemaboxapi/internal/model"
 )
 
-type CustomerService struct{}
-
-func NewCustomerService() *CustomerService {
-	return &CustomerService{}
+type CustomerService struct {
+	customerRepo CustomerRepository
 }
 
-func (impl *CustomerService) Create(ctx context.Context, customer dto.CreateCustomerDto) (*model.Customer, error) {
-	return &model.Customer{
-		ID:   1,
-		Name: customer.Name,
-	}, nil
+type CustomerRepository interface {
+	Create(ctx context.Context, customerDto dto.CreateCustomerDto) (*model.Customer, error)
+}
+
+func NewCustomerService(customerRepo CustomerRepository) *CustomerService {
+	return &CustomerService{
+		customerRepo: customerRepo,
+	}
+}
+
+func (s *CustomerService) Create(ctx context.Context, customer dto.CreateCustomerDto) (*model.Customer, error) {
+	res, err := s.customerRepo.Create(ctx, customer)
+	return res, err
 }

@@ -9,30 +9,30 @@ import (
 
 func TestGetLogLevel(t *testing.T) {
 	type args struct {
-		value uint
+		value string
 	}
 	tests := map[string]struct {
 		args args
 		want slog.Level
 	}{
-		"should return error level when value is 2": {
-			args: args{value: 2},
+		"should return error level": {
+			args: args{value: "error"},
 			want: slog.LevelError,
 		},
-		"should return warn level when value is 3": {
-			args: args{value: 3},
+		"should return warn level": {
+			args: args{value: "warn"},
 			want: slog.LevelWarn,
 		},
-		"should return info level when value is 4": {
-			args: args{value: 4},
+		"should return info level": {
+			args: args{value: "info"},
 			want: slog.LevelInfo,
 		},
-		"should return debug level when value is 5": {
-			args: args{value: 5},
+		"should return debug level": {
+			args: args{value: "debug"},
 			want: slog.LevelDebug,
 		},
 		"should return default info level when value is invalid": {
-			args: args{value: 6},
+			args: args{value: "invalid"},
 			want: slog.LevelInfo,
 		},
 	}

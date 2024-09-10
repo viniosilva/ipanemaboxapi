@@ -1,0 +1,11 @@
+api:
+  host: localhost
+  port: 3001
+  logLevel: error
+db:
+  host: localhost
+  port: 5433
+  dbName: ipanemabox_test
+  ssl: false
+  username: admin
+  password: password

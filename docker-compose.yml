@@ -1,0 +1,25 @@
+services:
+
+  db:
+    image: postgres:16.4-alpine
+    restart: always
+    ports:
+      - 5432:5432
+    volumes:
+     - type: tmpfs
+       target: /dev/shm
+       tmpfs:
+         size: 134217728 # 128*2^20 bytes = 128Mb
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: S3CR31
+      POSTGRES_DB: ipanemabox
+  db-test:
+    image: postgres:16.4-alpine
+    restart: always
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ipanemabox_test

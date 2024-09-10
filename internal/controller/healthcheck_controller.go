@@ -13,7 +13,7 @@ func NewHealthCheckController() *HealthCheckController {
 	return &HealthCheckController{}
 }
 
-func (impl *HealthCheckController) Check(ctx *gin.Context) {
+func (c *HealthCheckController) Check(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, presenter.HealthCheckRes{
 		Status: presenter.HealthCheckStatusUp,
 	})

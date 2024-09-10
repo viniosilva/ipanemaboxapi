@@ -9,22 +9,35 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/viniosilva/ipanemaboxapi/internal/factory"
+	"github.com/viniosilva/ipanemaboxapi/internal/utils/config"
+	"github.com/viniosilva/ipanemaboxapi/pkg/postgres"
 )
 
 func TestApi(t *testing.T) {
-	r := configure()
+	r := configure(t)
 
-	w := request(r, http.MethodGet, "/api/healthcheck", "")
-	assert.Equal(t, http.StatusOK, w.Code)
+	t.Run("should ping healthcheck", func(tt *testing.T) {
+		w := request(r, http.MethodGet, "/api/healthcheck", "")
+		assert.Equal(tt, http.StatusOK, w.Code)
+	})
 
-	payload := `{"name":"Testing"}`
-	w = request(r, http.MethodPost, "/api/v1/customers", payload)
-	assert.Equal(t, http.StatusCreated, w.Code)
+	t.Run("should create a customer", func(tt *testing.T) {
+		payload := `{"name":"Testing"}`
+		w := request(r, http.MethodPost, "/api/v1/customers", payload)
+		assert.Equal(t, http.StatusCreated, w.Code)
+	})
 }
 
-func configure() *gin.Engine {
-	f := factory.Build()
+func configure(t *testing.T) *gin.Engine {
+	cfg, err := config.ViperConfigure(".")
+	require.NoError(t, err)
+
+	db, err := postgres.Connect(cfg.DB.Host, cfg.DB.Port, cfg.DB.DbName, cfg.DB.Username, cfg.DB.Password, cfg.DB.Ssl)
+	require.NoError(t, err)
+
+	f := factory.Build(db)
 	r := gin.Default()
 	r.GET("/api/healthcheck", f.HealthCheckController.Check)
 	r.POST("/api/v1/customers", f.CustomerController.Create)

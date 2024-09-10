@@ -1,0 +1,11 @@
+api:
+  host: localhost
+  port: 3000
+  logLevel: debug
+db:
+  host: localhost
+  port: 5432
+  dbName: ipanemabox
+  ssl: false
+  username: admin
+  password: # .env 

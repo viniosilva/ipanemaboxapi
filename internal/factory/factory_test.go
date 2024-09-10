@@ -7,6 +7,6 @@ import (
 )
 
 func TestBuild(t *testing.T) {
-	got := Build()
+	got := Build(nil)
 	assert.NotNil(t, got)
 }

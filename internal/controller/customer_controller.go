@@ -25,14 +25,14 @@ func NewCustomerController(customerSvc CustomerService) *CustomerController {
 	}
 }
 
-func (impl *CustomerController) Create(ctx *gin.Context) {
+func (c *CustomerController) Create(ctx *gin.Context) {
 	var payload presenter.CustomerReq
 	if err := ctx.BindJSON(&payload); err != nil {
 		ctx.JSON(http.StatusBadRequest, presenter.ErrorRes{Message: err.Error()})
 		return
 	}
 
-	res, err := impl.customerSvc.Create(ctx, dto.CreateCustomerDto{
+	res, err := c.customerSvc.Create(ctx, dto.CreateCustomerDto{
 		Name: payload.Name,
 	})
 	if err != nil {
