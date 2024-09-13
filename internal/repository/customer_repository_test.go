@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"testing"
 
@@ -78,25 +79,21 @@ func TestCustomerRepository_Create(t *testing.T) {
 			repository := NewCustomerRepository(sqlx.NewDb(db, "postgres"))
 			got, err := repository.Create(tt.args.ctx, tt.args.customerDto)
 
+			mock.ExpectationsWereMet()
 			assert.Equal(t, tt.want, got)
-
 			if err != nil || tt.wantErr != "" {
 				assert.EqualError(t, err, tt.wantErr)
 			}
-			mock.ExpectationsWereMet()
 		})
 	}
 }
 
 func TestCustomerRepository_Find(t *testing.T) {
-	// Definir o SQL esperado na consulta
 	findCustomerQuery := `SELECT id, name FROM customers WHERE id = \$1`
-
 	type args struct {
 		ctx context.Context
 		id  int64
 	}
-
 	tests := map[string]struct {
 		mock    func(mock sqlmock.Sqlmock)
 		args    args
@@ -105,28 +102,39 @@ func TestCustomerRepository_Find(t *testing.T) {
 	}{
 		"should find customer successfully": {
 			mock: func(mock sqlmock.Sqlmock) {
-				// Mock da consulta que retorna um cliente
 				mock.ExpectQuery(findCustomerQuery).
 					WithArgs(1).
-					WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(1, "Test Customer"))
+					WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(1, "Testing"))
 			},
 			args: args{
 				ctx: context.Background(),
 				id:  1,
 			},
-			want: &model.Customer{ID: 1, Name: "Test Customer"},
+			want: &model.Customer{ID: 1, Name: "Testing"},
 		},
 		"should throw error when customer not found": {
 			mock: func(mock sqlmock.Sqlmock) {
 				mock.ExpectQuery(findCustomerQuery).
 					WithArgs(2).
-					WillReturnError(fmt.Errorf("customer not found"))
+					WillReturnError(sql.ErrNoRows)
 			},
 			args: args{
 				ctx: context.Background(),
 				id:  2,
 			},
-			wantErr: "customer not found",
+			wantErr: "customer not found by ID 2",
+		},
+		"should throw error": {
+			mock: func(mock sqlmock.Sqlmock) {
+				mock.ExpectQuery(findCustomerQuery).
+					WithArgs(3).
+					WillReturnError(fmt.Errorf("error"))
+			},
+			args: args{
+				ctx: context.Background(),
+				id:  3,
+			},
+			wantErr: "error",
 		},
 	}
 
@@ -139,9 +147,9 @@ func TestCustomerRepository_Find(t *testing.T) {
 			tt.mock(mock)
 
 			repository := NewCustomerRepository(sqlx.NewDb(db, "postgres"))
-
 			got, err := repository.Find(tt.args.ctx, tt.args.id)
 
+			mock.ExpectationsWereMet()
 			assert.Equal(t, tt.want, got)
 			if err != nil || tt.wantErr != "" {
 				assert.EqualError(t, err, tt.wantErr)

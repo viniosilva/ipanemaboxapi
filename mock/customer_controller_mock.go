@@ -55,3 +55,18 @@ func (mr *MockCustomerServiceMockRecorder) Create(ctx, customer any) *gomock.Cal
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockCustomerService)(nil).Create), ctx, customer)
 }
+
+// Find mocks base method.
+func (m *MockCustomerService) Find(ctx context.Context, id int64) (*model.Customer, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Find", ctx, id)
+	ret0, _ := ret[0].(*model.Customer)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Find indicates an expected call of Find.
+func (mr *MockCustomerServiceMockRecorder) Find(ctx, id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Find", reflect.TypeOf((*MockCustomerService)(nil).Find), ctx, id)
+}

@@ -55,3 +55,18 @@ func (mr *MockCustomerRepositoryMockRecorder) Create(ctx, customerDto any) *gomo
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockCustomerRepository)(nil).Create), ctx, customerDto)
 }
+
+// Find mocks base method.
+func (m *MockCustomerRepository) Find(ctx context.Context, id int64) (*model.Customer, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Find", ctx, id)
+	ret0, _ := ret[0].(*model.Customer)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Find indicates an expected call of Find.
+func (mr *MockCustomerRepositoryMockRecorder) Find(ctx, id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Find", reflect.TypeOf((*MockCustomerRepository)(nil).Find), ctx, id)
+}

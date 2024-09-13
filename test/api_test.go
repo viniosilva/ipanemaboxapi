@@ -1,6 +1,8 @@
 package test
 
 import (
+	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -10,12 +12,14 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/viniosilva/ipanemaboxapi/internal/controller/presenter"
 	"github.com/viniosilva/ipanemaboxapi/internal/factory"
 	"github.com/viniosilva/ipanemaboxapi/internal/utils/config"
 	"github.com/viniosilva/ipanemaboxapi/pkg/postgres"
 )
 
 func TestApi(t *testing.T) {
+	var customer presenter.CustomerRes
 	r := configure(t)
 
 	t.Run("should ping healthcheck", func(tt *testing.T) {
@@ -27,6 +31,15 @@ func TestApi(t *testing.T) {
 		payload := `{"name":"Testing"}`
 		w := request(r, http.MethodPost, "/api/v1/customers", payload)
 		assert.Equal(t, http.StatusCreated, w.Code)
+
+		err := json.Unmarshal(w.Body.Bytes(), &customer)
+		require.NoError(t, err)
+	})
+
+	t.Run("should find customer", func(tt *testing.T) {
+		url := fmt.Sprintf("/api/v1/customers/%d", customer.ID)
+		w := request(r, http.MethodGet, url, "")
+		assert.Equal(t, http.StatusOK, w.Code)
 	})
 }
 
@@ -41,6 +54,7 @@ func configure(t *testing.T) *gin.Engine {
 	r := gin.Default()
 	r.GET("/api/healthcheck", f.HealthCheckController.Check)
 	r.POST("/api/v1/customers", f.CustomerController.Create)
+	r.GET("/api/v1/customers/:id", f.CustomerController.Find)
 
 	return r
 }

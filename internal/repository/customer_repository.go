@@ -2,9 +2,12 @@ package repository
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/viniosilva/ipanemaboxapi/internal/dto"
+	"github.com/viniosilva/ipanemaboxapi/internal/exception"
 	"github.com/viniosilva/ipanemaboxapi/internal/model"
 )
 
@@ -44,6 +47,9 @@ func (r *CustomerRepository) Find(ctx context.Context, id int64) (*model.Custome
 	q := "SELECT id, name FROM customers WHERE id = $1"
 	err := r.db.GetContext(ctx, customer, q, id)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, exception.NewNotFoundException("customer not found by ID %d", id)
+		}
 		return nil, err
 	}
 
