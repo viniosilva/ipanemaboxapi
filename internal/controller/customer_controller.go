@@ -28,6 +28,17 @@ func NewCustomerController(customerSvc CustomerService) *CustomerController {
 	}
 }
 
+// CreateCustomer godoc
+// @Summary      Create a new customer
+// @Description  Creates a new customer and returns its details
+// @Tags         customers
+// @Accept       json
+// @Produce      json
+// @Param        customer  body      presenter.CustomerReq  true  "Customer information"
+// @Success      201       {object}  presenter.CustomerRes
+// @Failure      400       {object}  presenter.ErrorRes
+// @Failure      500       {object}  presenter.ErrorRes
+// @Router       /api/v1/customers [post]
 func (c *CustomerController) Create(ctx *gin.Context) {
 	var payload presenter.CustomerReq
 	if err := ctx.BindJSON(&payload); err != nil {
@@ -51,6 +62,18 @@ func (c *CustomerController) Create(ctx *gin.Context) {
 	})
 }
 
+// FindCustomer godoc
+// @Summary      Find a customer by ID
+// @Description  Retrieves a customer by their ID
+// @Tags         customers
+// @Accept       json
+// @Produce      json
+// @Param        id   path      int64  true  "Customer ID"
+// @Success      200  {object}  presenter.CustomerRes
+// @Failure      400  {object}  presenter.ErrorRes  "Invalid ID"
+// @Failure      404  {object}  presenter.ErrorRes  "Customer not found"
+// @Failure      500  {object}  presenter.ErrorRes
+// @Router       /api/v1/customers/{id} [get]
 func (c *CustomerController) Find(ctx *gin.Context) {
 	idParam := ctx.Param("id")
 	id, err := strconv.ParseInt(idParam, 10, 64)

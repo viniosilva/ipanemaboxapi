@@ -36,6 +36,8 @@ Start the server
   make dev
 ```
 
+Local swagger [[here]](http://localhost:3000/swagger/index.html)
+
 
 ## Running Tests
 

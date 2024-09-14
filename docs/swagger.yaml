@@ -1,0 +1,127 @@
+definitions:
+  presenter.CustomerReq:
+    properties:
+      name:
+        example: Fulano Oliveira
+        type: string
+    required:
+    - name
+    type: object
+  presenter.CustomerRes:
+    properties:
+      id:
+        example: 1
+        type: integer
+      name:
+        example: Fulano Oliveira
+        type: string
+    type: object
+  presenter.ErrorRes:
+    properties:
+      message:
+        example: internal server error
+        type: string
+    type: object
+  presenter.HealthCheckRes:
+    properties:
+      status:
+        allOf:
+        - $ref: '#/definitions/presenter.HealthCheckStatus'
+        example: up
+    type: object
+  presenter.HealthCheckStatus:
+    enum:
+    - up
+    - down
+    type: string
+    x-enum-varnames:
+    - HealthCheckStatusUp
+    - HealthCheckStatusDown
+info:
+  contact:
+    email: contato@ipanemabox.com.br
+    name: Vinícius Silva
+  description: Schedule, services and customers manager.
+  termsOfService: http://swagger.io/terms/
+  title: Ipanamea Box API
+  version: "1.0"
+paths:
+  /api/healthcheck:
+    get:
+      consumes:
+      - application/json
+      description: Verify status application
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presenter.HealthCheckRes'
+      summary: Health check API
+      tags:
+      - health
+  /api/v1/customers:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new customer and returns its details
+      parameters:
+      - description: Customer information
+        in: body
+        name: customer
+        required: true
+        schema:
+          $ref: '#/definitions/presenter.CustomerReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/presenter.CustomerRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/presenter.ErrorRes'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/presenter.ErrorRes'
+      summary: Create a new customer
+      tags:
+      - customers
+  /api/v1/customers/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a customer by their ID
+      parameters:
+      - description: Customer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presenter.CustomerRes'
+        "400":
+          description: Invalid ID
+          schema:
+            $ref: '#/definitions/presenter.ErrorRes'
+        "404":
+          description: Customer not found
+          schema:
+            $ref: '#/definitions/presenter.ErrorRes'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/presenter.ErrorRes'
+      summary: Find a customer by ID
+      tags:
+      - customers
+swagger: "2.0"

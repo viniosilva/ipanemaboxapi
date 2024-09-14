@@ -1,7 +1,11 @@
 all:
 	go install go.uber.org/mock/mockgen@latest
 	go install github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+	go install github.com/swaggo/swag/cmd/swag@latest
 	go mod tidy
+
+swag:
+	swag init -g cmd/api/main.go
 
 infra/up:
 	docker compose up -d db

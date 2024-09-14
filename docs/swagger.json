@@ -1,0 +1,194 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Schedule, services and customers manager.",
+        "title": "Ipanamea Box API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "Vinícius Silva",
+            "email": "contato@ipanemabox.com.br"
+        },
+        "version": "1.0"
+    },
+    "paths": {
+        "/api/healthcheck": {
+            "get": {
+                "description": "Verify status application",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "health"
+                ],
+                "summary": "Health check API",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presenter.HealthCheckRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/customers": {
+            "post": {
+                "description": "Creates a new customer and returns its details",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "customers"
+                ],
+                "summary": "Create a new customer",
+                "parameters": [
+                    {
+                        "description": "Customer information",
+                        "name": "customer",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/presenter.CustomerReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/presenter.CustomerRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/presenter.ErrorRes"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/presenter.ErrorRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/customers/{id}": {
+            "get": {
+                "description": "Retrieves a customer by their ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "customers"
+                ],
+                "summary": "Find a customer by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Customer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presenter.CustomerRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID",
+                        "schema": {
+                            "$ref": "#/definitions/presenter.ErrorRes"
+                        }
+                    },
+                    "404": {
+                        "description": "Customer not found",
+                        "schema": {
+                            "$ref": "#/definitions/presenter.ErrorRes"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/presenter.ErrorRes"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "presenter.CustomerReq": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "example": "Fulano Oliveira"
+                }
+            }
+        },
+        "presenter.CustomerRes": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Fulano Oliveira"
+                }
+            }
+        },
+        "presenter.ErrorRes": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "internal server error"
+                }
+            }
+        },
+        "presenter.HealthCheckRes": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/presenter.HealthCheckStatus"
+                        }
+                    ],
+                    "example": "up"
+                }
+            }
+        },
+        "presenter.HealthCheckStatus": {
+            "type": "string",
+            "enum": [
+                "up",
+                "down"
+            ],
+            "x-enum-varnames": [
+                "HealthCheckStatusUp",
+                "HealthCheckStatusDown"
+            ]
+        }
+    }
+}
