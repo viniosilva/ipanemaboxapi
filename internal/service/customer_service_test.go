@@ -104,12 +104,12 @@ func TestCustomerService_Find(t *testing.T) {
 		"should throw error": {
 			mock: func(customerRepo *mock.MockCustomerRepository) {
 				customerRepo.EXPECT().
-					Find(gomock.Any(), int64(2)).
+					Find(gomock.Any(), int64(1)).
 					Return(nil, fmt.Errorf("error"))
 			},
 			args: args{
 				ctx: context.TODO(),
-				id:  2,
+				id:  1,
 			},
 			wantErr: "error",
 		},
@@ -175,12 +175,12 @@ func TestCustomerService_Update(t *testing.T) {
 		"should throw error": {
 			mock: func(customerRepo *mock.MockCustomerRepository) {
 				customerRepo.EXPECT().
-					Update(gomock.Any(), int64(2), gomock.Any()).
+					Update(gomock.Any(), int64(1), gomock.Any()).
 					Return(nil, fmt.Errorf("error"))
 			},
 			args: args{
 				ctx:      context.TODO(),
-				id:       2,
+				id:       1,
 				customer: dto.CustomerDataDto{Name: "Testing"},
 			},
 			wantErr: "error",
@@ -199,6 +199,59 @@ func TestCustomerService_Update(t *testing.T) {
 			got, err := svc.Update(tt.args.ctx, tt.args.id, tt.args.customer)
 
 			assert.Equal(t, tt.want, got)
+			if err != nil || tt.wantErr != "" {
+				assert.EqualError(t, err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestCustomerService_Delete(t *testing.T) {
+	type args struct {
+		ctx context.Context
+		id  int64
+	}
+	tests := map[string]struct {
+		mock    func(customerRepo *mock.MockCustomerRepository)
+		args    args
+		wantErr string
+	}{
+		"should delete customer successfully": {
+			mock: func(customerRepo *mock.MockCustomerRepository) {
+				customerRepo.EXPECT().
+					Delete(gomock.Any(), int64(1)).
+					Return(nil)
+			},
+			args: args{
+				ctx: context.TODO(),
+				id:  1,
+			},
+		},
+		"should throw error": {
+			mock: func(customerRepo *mock.MockCustomerRepository) {
+				customerRepo.EXPECT().
+					Delete(gomock.Any(), int64(1)).
+					Return(fmt.Errorf("error"))
+			},
+			args: args{
+				ctx: context.TODO(),
+				id:  1,
+			},
+			wantErr: "error",
+		},
+	}
+
+	for name, tt := range tests {
+		t.Run(name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			customerRepoMock := mock.NewMockCustomerRepository(ctrl)
+			tt.mock(customerRepoMock)
+
+			svc := NewCustomerService(customerRepoMock)
+			err := svc.Delete(tt.args.ctx, tt.args.id)
+
 			if err != nil || tt.wantErr != "" {
 				assert.EqualError(t, err, tt.wantErr)
 			}

@@ -264,3 +264,65 @@ func TestCustomerController_Update(t *testing.T) {
 		})
 	}
 }
+
+func TestCustomerController_Delete(t *testing.T) {
+	type args struct {
+		id string
+	}
+	tests := map[string]struct {
+		mock       func(customerSvc *mock.MockCustomerService)
+		args       args
+		wantStatus int
+		wantErr    presenter.ErrorRes
+	}{
+		"should find customer successfully": {
+			mock: func(customerSvc *mock.MockCustomerService) {
+				customerSvc.EXPECT().Delete(gomock.Any(), int64(1)).
+					Return(nil)
+			},
+			args: args{
+				id: "1",
+			},
+			wantStatus: http.StatusNoContent,
+		},
+		"should throw bad request when ID is invalid": {
+			mock:       func(customerSvc *mock.MockCustomerService) {},
+			args:       args{id: "one"},
+			wantStatus: http.StatusBadRequest,
+			wantErr:    presenter.ErrorRes{Message: "invalid ID"},
+		},
+		"should throw internal server error": {
+			mock: func(customerSvc *mock.MockCustomerService) {
+				customerSvc.EXPECT().Delete(gomock.Any(), int64(1)).
+					Return(fmt.Errorf("error"))
+			},
+			args: args{
+				id: "1",
+			},
+			wantStatus: http.StatusInternalServerError,
+			wantErr:    presenter.ErrorRes{Message: presenter.INTERNAL_SERVER_ERROR_MSG},
+		},
+	}
+	for name, tt := range tests {
+		t.Run(name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			customerSvcMock := mock.NewMockCustomerService(ctrl)
+			tt.mock(customerSvcMock)
+
+			controller := NewCustomerController(customerSvcMock)
+			r := gin.Default()
+			r.DELETE("/api/v1/customers/:id", controller.Delete)
+
+			w := httptest.NewRecorder()
+			url := fmt.Sprintf("/api/v1/customers/%s", tt.args.id)
+			req, _ := http.NewRequest(http.MethodDelete, url, nil)
+			r.ServeHTTP(w, req)
+
+			var bodyErr presenter.ErrorRes
+			json.Unmarshal(w.Body.Bytes(), &bodyErr)
+
+			assert.Equal(t, tt.wantStatus, w.Code)
+			assert.Equal(t, tt.wantErr, bodyErr)
+		})
+	}
+}

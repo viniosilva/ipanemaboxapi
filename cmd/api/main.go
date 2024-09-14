@@ -43,6 +43,7 @@ func main() {
 		slog.Error(fmt.Sprintf("failed on postgres.Connect: %v", err))
 		os.Exit(1)
 	}
+	defer db.Close()
 
 	addr := fmt.Sprintf("%s:%s", cfg.Api.Host, cfg.Api.Port)
 	docs.SwaggerInfo.Host = addr
@@ -60,6 +61,7 @@ func main() {
 	router.POST("/api/v1/customers", factory.CustomerController.Create)
 	router.GET("/api/v1/customers/:id", factory.CustomerController.Find)
 	router.PUT("/api/v1/customers/:id", factory.CustomerController.Update)
+	router.DELETE("/api/v1/customers/:id", factory.CustomerController.Delete)
 
 	srv := &http.Server{Addr: addr, Handler: router.Handler()}
 	go func() {
@@ -80,5 +82,3 @@ func main() {
 
 	slog.Info("server exiting")
 }
-
-// Refs: https://gin-gonic.com/docs/examples/graceful-restart-or-stop/

@@ -21,6 +21,7 @@ type CustomerService interface {
 	Create(ctx context.Context, customer dto.CustomerDataDto) (*model.Customer, error)
 	Find(ctx context.Context, id int64) (*model.Customer, error)
 	Update(ctx context.Context, id int64, customer dto.CustomerDataDto) (*model.Customer, error)
+	Delete(ctx context.Context, id int64) error
 }
 
 func NewCustomerController(customerSvc CustomerService) *CustomerController {
@@ -146,4 +147,33 @@ func (c *CustomerController) Update(ctx *gin.Context) {
 		ID:   res.ID,
 		Name: res.Name,
 	})
+}
+
+// DeleteCustomer godoc
+// @Summary      Delete a customer
+// @Description  Deletes a customer by their ID
+// @Tags         customers
+// @Accept       json
+// @Produce      json
+// @Param        id   path      int64  true  "Customer ID"
+// @Success      204  "No Content"
+// @Failure      400  {object}  presenter.ErrorRes  "Invalid ID"
+// @Failure      500  {object}  presenter.ErrorRes  "Internal Server Error"
+// @Router       /api/v1/customers/{id} [delete]
+func (c *CustomerController) Delete(ctx *gin.Context) {
+	idParam := ctx.Param("id")
+	id, err := strconv.ParseInt(idParam, 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, presenter.ErrorRes{Message: "invalid ID"})
+		return
+	}
+
+	err = c.customerSvc.Delete(ctx, id)
+	if err != nil {
+		slog.ErrorContext(ctx, err.Error())
+		ctx.JSON(http.StatusInternalServerError, presenter.ErrorRes{Message: presenter.INTERNAL_SERVER_ERROR_MSG})
+		return
+	}
+
+	ctx.Status(http.StatusNoContent)
 }

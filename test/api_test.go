@@ -43,6 +43,10 @@ func TestApi(t *testing.T) {
 	payload = `{"name":"Testing Updated"}`
 	w = request(r, http.MethodPut, url, payload)
 	assert.Equal(t, http.StatusOK, w.Code)
+
+	// should delete customer
+	w = request(r, http.MethodDelete, url, "")
+	assert.Equal(t, http.StatusNoContent, w.Code)
 }
 
 func configure(t *testing.T) *gin.Engine {
@@ -58,6 +62,7 @@ func configure(t *testing.T) *gin.Engine {
 	r.POST("/api/v1/customers", f.CustomerController.Create)
 	r.GET("/api/v1/customers/:id", f.CustomerController.Find)
 	r.PUT("/api/v1/customers/:id", f.CustomerController.Update)
+	r.DELETE("/api/v1/customers/:id", f.CustomerController.Delete)
 
 	return r
 }

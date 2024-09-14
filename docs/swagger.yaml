@@ -92,6 +92,32 @@ paths:
       tags:
       - customers
   /api/v1/customers/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a customer by their ID
+      parameters:
+      - description: Customer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Invalid ID
+          schema:
+            $ref: '#/definitions/presenter.ErrorRes'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/presenter.ErrorRes'
+      summary: Delete a customer
+      tags:
+      - customers
     get:
       consumes:
       - application/json
