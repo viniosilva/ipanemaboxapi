@@ -22,25 +22,27 @@ func TestApi(t *testing.T) {
 	var customer presenter.CustomerRes
 	r := configure(t)
 
-	t.Run("should ping healthcheck", func(tt *testing.T) {
-		w := request(r, http.MethodGet, "/api/healthcheck", "")
-		assert.Equal(tt, http.StatusOK, w.Code)
-	})
+	// should ping healthcheck
+	w := request(r, http.MethodGet, "/api/healthcheck", "")
+	assert.Equal(t, http.StatusOK, w.Code)
 
-	t.Run("should create a customer", func(tt *testing.T) {
-		payload := `{"name":"Testing"}`
-		w := request(r, http.MethodPost, "/api/v1/customers", payload)
-		assert.Equal(t, http.StatusCreated, w.Code)
+	// should create a customer
+	payload := `{"name":"Testing"}`
+	w = request(r, http.MethodPost, "/api/v1/customers", payload)
+	assert.Equal(t, http.StatusCreated, w.Code)
 
-		err := json.Unmarshal(w.Body.Bytes(), &customer)
-		require.NoError(t, err)
-	})
+	err := json.Unmarshal(w.Body.Bytes(), &customer)
+	require.NoError(t, err)
 
-	t.Run("should find customer", func(tt *testing.T) {
-		url := fmt.Sprintf("/api/v1/customers/%d", customer.ID)
-		w := request(r, http.MethodGet, url, "")
-		assert.Equal(t, http.StatusOK, w.Code)
-	})
+	// should find customer
+	url := fmt.Sprintf("/api/v1/customers/%d", customer.ID)
+	w = request(r, http.MethodGet, url, "")
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	// should update customer
+	payload = `{"name":"Testing Updated"}`
+	w = request(r, http.MethodPut, url, payload)
+	assert.Equal(t, http.StatusOK, w.Code)
 }
 
 func configure(t *testing.T) *gin.Engine {
@@ -55,6 +57,7 @@ func configure(t *testing.T) *gin.Engine {
 	r.GET("/api/healthcheck", f.HealthCheckController.Check)
 	r.POST("/api/v1/customers", f.CustomerController.Create)
 	r.GET("/api/v1/customers/:id", f.CustomerController.Find)
+	r.PUT("/api/v1/customers/:id", f.CustomerController.Update)
 
 	return r
 }

@@ -51,6 +51,7 @@ func main() {
 	router.GET("/api/healthcheck", factory.HealthCheckController.Check)
 	router.POST("/api/v1/customers", factory.CustomerController.Create)
 	router.GET("/api/v1/customers/:id", factory.CustomerController.Find)
+	router.PUT("/api/v1/customers/:id", factory.CustomerController.Update)
 
 	srv := &http.Server{Addr: addr, Handler: router.Handler()}
 	go func() {

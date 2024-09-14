@@ -124,4 +124,42 @@ paths:
       summary: Find a customer by ID
       tags:
       - customers
+    put:
+      consumes:
+      - application/json
+      description: Updates an existing customer's details by their ID
+      parameters:
+      - description: Customer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Customer information
+        in: body
+        name: customer
+        required: true
+        schema:
+          $ref: '#/definitions/presenter.CustomerReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presenter.CustomerRes'
+        "400":
+          description: Invalid ID or bad request
+          schema:
+            $ref: '#/definitions/presenter.ErrorRes'
+        "404":
+          description: Customer not found
+          schema:
+            $ref: '#/definitions/presenter.ErrorRes'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/presenter.ErrorRes'
+      summary: Update a customer by ID
+      tags:
+      - customers
 swagger: "2.0"

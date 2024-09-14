@@ -2,11 +2,7 @@ package dto
 
 import "github.com/viniosilva/ipanemaboxapi/internal/model"
 
-type CreateCustomerDto struct {
-	Name string
-}
-
-type UpdateCustomerDto struct {
+type CustomerDataDto struct {
 	Name string
 }
 

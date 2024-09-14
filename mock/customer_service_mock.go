@@ -42,7 +42,7 @@ func (m *MockCustomerRepository) EXPECT() *MockCustomerRepositoryMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockCustomerRepository) Create(ctx context.Context, customerDto dto.CreateCustomerDto) (*model.Customer, error) {
+func (m *MockCustomerRepository) Create(ctx context.Context, customerDto dto.CustomerDataDto) (*model.Customer, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Create", ctx, customerDto)
 	ret0, _ := ret[0].(*model.Customer)
@@ -69,4 +69,19 @@ func (m *MockCustomerRepository) Find(ctx context.Context, id int64) (*model.Cus
 func (mr *MockCustomerRepositoryMockRecorder) Find(ctx, id any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Find", reflect.TypeOf((*MockCustomerRepository)(nil).Find), ctx, id)
+}
+
+// Update mocks base method.
+func (m *MockCustomerRepository) Update(ctx context.Context, id int64, customerDto dto.CustomerDataDto) (*model.Customer, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Update", ctx, id, customerDto)
+	ret0, _ := ret[0].(*model.Customer)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Update indicates an expected call of Update.
+func (mr *MockCustomerRepositoryMockRecorder) Update(ctx, id, customerDto any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockCustomerRepository)(nil).Update), ctx, id, customerDto)
 }
