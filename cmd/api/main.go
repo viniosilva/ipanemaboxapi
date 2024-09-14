@@ -9,6 +9,7 @@ import (
 	"syscall"
 
 	"github.com/gin-gonic/gin"
+	sloggin "github.com/samber/slog-gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/viniosilva/ipanemaboxapi/docs"
@@ -33,7 +34,8 @@ func main() {
 	}
 
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
-		Level: logger.GetLogLevel(cfg.Api.LogLevel)}))
+		Level: logger.GetLogLevel(cfg.Api.LogLevel),
+	}))
 	slog.SetDefault(logger)
 
 	db, err := postgres.Connect(cfg.DB.Host, cfg.DB.Port, cfg.DB.DbName, cfg.DB.Username, cfg.DB.Password, cfg.DB.Ssl)
@@ -46,7 +48,13 @@ func main() {
 	docs.SwaggerInfo.Host = addr
 	factory := factory.Build(db)
 
-	router := gin.Default()
+	router := gin.New()
+	router.Use(gin.Recovery())
+	router.Use(sloggin.NewWithConfig(logger, sloggin.Config{
+		WithSpanID:  true,
+		WithTraceID: true,
+	}))
+
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.GET("/api/healthcheck", factory.HealthCheckController.Check)
 	router.POST("/api/v1/customers", factory.CustomerController.Create)
