@@ -20,6 +20,7 @@ type CustomerController struct {
 type CustomerService interface {
 	Create(ctx context.Context, customer dto.CustomerDataDto) (*model.Customer, error)
 	Find(ctx context.Context, id int64) (*model.Customer, error)
+	List(ctx context.Context, page, limit int) (*dto.CustomersList, error)
 	Update(ctx context.Context, id int64, customer dto.CustomerDataDto) (*model.Customer, error)
 	Delete(ctx context.Context, id int64) error
 }
@@ -99,6 +100,57 @@ func (c *CustomerController) Find(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, presenter.CustomerRes{
 		ID:   res.ID,
 		Name: res.Name,
+	})
+}
+
+// ListCustomers godoc
+// @Summary      List customers
+// @Description  Retrieves a list of customers
+// @Tags         customers
+// @Accept       json
+// @Produce      json
+// @Param        page   query     int     false  "Page number"     default(1)
+// @Param        limit  query     int     false  "Items per page"  default(10)
+// @Success      200    {object}  presenter.CustomersListRes
+// @Failure      400    {object}  presenter.ErrorRes  "Invalid pagination parameters"
+// @Failure      500    {object}  presenter.ErrorRes
+// @Router       /api/v1/customers [get]
+func (c *CustomerController) List(ctx *gin.Context) {
+	page, err := strconv.Atoi(ctx.DefaultQuery("page", "1"))
+	if err != nil || page < 1 {
+		ctx.JSON(http.StatusBadRequest, presenter.ErrorRes{Message: "invalid page"})
+		return
+	}
+
+	limit, err := strconv.Atoi(ctx.DefaultQuery("limit", "10"))
+	if err != nil || limit < 1 {
+		ctx.JSON(http.StatusBadRequest, presenter.ErrorRes{Message: "invalid limit"})
+		return
+	}
+
+	res, err := c.customerSvc.List(ctx, page, limit)
+	if err != nil {
+		slog.ErrorContext(ctx, err.Error())
+		ctx.JSON(http.StatusInternalServerError, presenter.ErrorRes{Message: presenter.INTERNAL_SERVER_ERROR_MSG})
+		return
+	}
+
+	customers := make([]presenter.CustomerRes, len(res.Data))
+	for i, d := range res.Data {
+		customers[i] = presenter.CustomerRes{
+			ID:   d.ID,
+			Name: d.Name,
+		}
+	}
+
+	ctx.JSON(http.StatusOK, presenter.CustomersListRes{
+		Metadata: presenter.MetadataPage{
+			TotalCount:  res.Meta.TotalCount,
+			TotalPages:  res.Meta.TotalPages,
+			CurrentPage: res.Meta.CurrentPage,
+			PageSize:    res.Meta.PageSize,
+		},
+		Data: customers,
 	})
 }
 

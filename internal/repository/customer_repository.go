@@ -65,6 +65,57 @@ func (r *CustomerRepository) Find(ctx context.Context, id int64) (*model.Custome
 	return customer, nil
 }
 
+func (r *CustomerRepository) List(ctx context.Context, page, limit int) (*dto.CustomersList, error) {
+	tx, err := r.db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelReadCommitted})
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if err != nil {
+			tx.Rollback()
+		} else {
+			tx.Commit()
+		}
+	}()
+
+	customersList := &dto.CustomersList{
+		Data: []model.Customer{},
+	}
+
+	q := "SELECT id, name " +
+		"FROM customers " +
+		"WHERE deleted_at IS NULL " +
+		"LIMIT $1 OFFSET $2"
+
+	offset := (page - 1) * limit
+	rows, err := tx.QueryContext(ctx, q, limit, offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		c := model.Customer{}
+		if err = rows.Scan(&c.ID, &c.Name); err != nil {
+			return nil, err
+		}
+		customersList.Data = append(customersList.Data, c)
+	}
+
+	qCount := "SELECT COUNT(*) " +
+		"FROM customers " +
+		"WHERE deleted_at IS NULL"
+	if err = tx.QueryRowContext(ctx, qCount).Scan(&customersList.Meta.TotalCount); err != nil {
+		return nil, err
+	}
+
+	customersList.Meta.CurrentPage = page
+	customersList.Meta.PageSize = limit
+	customersList.Meta.SetTotalPages()
+
+	return customersList, nil
+}
+
 func (r *CustomerRepository) Update(ctx context.Context, id int64, customerDto dto.CustomerDataDto) (*model.Customer, error) {
 	customer := &model.Customer{ID: id, Name: customerDto.Name}
 

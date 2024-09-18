@@ -43,6 +43,55 @@ const docTemplate = `{
             }
         },
         "/api/v1/customers": {
+            "get": {
+                "description": "Retrieves a list of customers",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "customers"
+                ],
+                "summary": "List customers",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Items per page",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presenter.CustomersListRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid pagination parameters",
+                        "schema": {
+                            "$ref": "#/definitions/presenter.ErrorRes"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/presenter.ErrorRes"
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "Creates a new customer and returns its details",
                 "consumes": [
@@ -261,6 +310,20 @@ const docTemplate = `{
                 }
             }
         },
+        "presenter.CustomersListRes": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/presenter.CustomerRes"
+                    }
+                },
+                "metadata": {
+                    "$ref": "#/definitions/presenter.MetadataPage"
+                }
+            }
+        },
         "presenter.ErrorRes": {
             "type": "object",
             "properties": {
@@ -293,6 +356,23 @@ const docTemplate = `{
                 "HealthCheckStatusUp",
                 "HealthCheckStatusDown"
             ]
+        },
+        "presenter.MetadataPage": {
+            "type": "object",
+            "properties": {
+                "current_page": {
+                    "type": "integer"
+                },
+                "page_size": {
+                    "type": "integer"
+                },
+                "total_count": {
+                    "type": "integer"
+                },
+                "total_pages": {
+                    "type": "integer"
+                }
+            }
         }
     }
 }`

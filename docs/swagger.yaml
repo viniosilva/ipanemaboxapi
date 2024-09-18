@@ -16,6 +16,15 @@ definitions:
         example: Fulano Oliveira
         type: string
     type: object
+  presenter.CustomersListRes:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/presenter.CustomerRes'
+        type: array
+      metadata:
+        $ref: '#/definitions/presenter.MetadataPage'
+    type: object
   presenter.ErrorRes:
     properties:
       message:
@@ -37,6 +46,17 @@ definitions:
     x-enum-varnames:
     - HealthCheckStatusUp
     - HealthCheckStatusDown
+  presenter.MetadataPage:
+    properties:
+      current_page:
+        type: integer
+      page_size:
+        type: integer
+      total_count:
+        type: integer
+      total_pages:
+        type: integer
+    type: object
 info:
   contact:
     email: contato@ipanemabox.com.br
@@ -62,6 +82,39 @@ paths:
       tags:
       - health
   /api/v1/customers:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a list of customers
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presenter.CustomersListRes'
+        "400":
+          description: Invalid pagination parameters
+          schema:
+            $ref: '#/definitions/presenter.ErrorRes'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/presenter.ErrorRes'
+      summary: List customers
+      tags:
+      - customers
     post:
       consumes:
       - application/json

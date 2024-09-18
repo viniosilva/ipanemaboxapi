@@ -14,6 +14,7 @@ type CustomerService struct {
 type CustomerRepository interface {
 	Create(ctx context.Context, customerDto dto.CustomerDataDto) (*model.Customer, error)
 	Find(ctx context.Context, id int64) (*model.Customer, error)
+	List(ctx context.Context, page, limit int) (*dto.CustomersList, error)
 	Update(ctx context.Context, id int64, customerDto dto.CustomerDataDto) (*model.Customer, error)
 	Delete(ctx context.Context, id int64) error
 }
@@ -32,6 +33,10 @@ func (s *CustomerService) Create(ctx context.Context, customer dto.CustomerDataD
 func (s *CustomerService) Find(ctx context.Context, id int64) (*model.Customer, error) {
 	res, err := s.customerRepo.Find(ctx, id)
 	return res, err
+}
+
+func (s *CustomerService) List(ctx context.Context, page, limit int) (*dto.CustomersList, error) {
+	return s.customerRepo.List(ctx, page, limit)
 }
 
 func (s *CustomerService) Update(ctx context.Context, id int64, customer dto.CustomerDataDto) (*model.Customer, error) {

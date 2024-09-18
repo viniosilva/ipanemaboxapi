@@ -173,6 +173,215 @@ func TestCustomerRepository_Find(t *testing.T) {
 	}
 }
 
+func TestCustomerRepository_List(t *testing.T) {
+	listCustomersQuery := "SELECT id, name " +
+		"FROM customers " +
+		"WHERE deleted_at IS NULL " +
+		`LIMIT \$1 OFFSET \$2`
+
+	countCustomersQuery := `SELECT COUNT\(\*\) ` +
+		"FROM customers " +
+		"WHERE deleted_at IS NULL"
+
+	type args struct {
+		ctx   context.Context
+		page  int
+		limit int
+	}
+	tests := map[string]struct {
+		mock    func(mock sqlmock.Sqlmock)
+		args    args
+		want    *dto.CustomersList
+		wantErr string
+	}{
+		"should list 2 of 2 customers successfully when page is 1 and limit is 10": {
+			mock: func(mock sqlmock.Sqlmock) {
+				mock.ExpectBegin()
+
+				rows := sqlmock.NewRows([]string{"id", "name"}).
+					AddRow(1, "Customer 1").
+					AddRow(2, "Customer 2")
+
+				mock.ExpectQuery(listCustomersQuery).
+					WithArgs(10, 0).
+					WillReturnRows(rows)
+
+				mock.ExpectQuery(countCustomersQuery).
+					WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(2))
+
+				mock.ExpectCommit()
+			},
+			args: args{
+				ctx:   context.Background(),
+				page:  1,
+				limit: 10,
+			},
+			want: &dto.CustomersList{
+				Meta: dto.MetadataPage{
+					TotalCount:  2,
+					TotalPages:  1,
+					PageSize:    10,
+					CurrentPage: 1,
+				},
+				Data: []model.Customer{
+					{ID: 1, Name: "Customer 1"},
+					{ID: 2, Name: "Customer 2"},
+				},
+			},
+		},
+		"should list 2 of 4 customers successfully when page is 2 and limit is 2": {
+			mock: func(mock sqlmock.Sqlmock) {
+				mock.ExpectBegin()
+
+				rows := sqlmock.NewRows([]string{"id", "name"}).
+					AddRow(3, "Customer 3").
+					AddRow(4, "Customer 4")
+
+				mock.ExpectQuery(listCustomersQuery).
+					WithArgs(2, 2).
+					WillReturnRows(rows)
+
+				mock.ExpectQuery(countCustomersQuery).
+					WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(4))
+
+				mock.ExpectCommit()
+			},
+			args: args{
+				ctx:   context.Background(),
+				page:  2,
+				limit: 2,
+			},
+			want: &dto.CustomersList{
+				Meta: dto.MetadataPage{
+					TotalCount:  4,
+					TotalPages:  2,
+					PageSize:    2,
+					CurrentPage: 2,
+				},
+				Data: []model.Customer{
+					{ID: 3, Name: "Customer 3"},
+					{ID: 4, Name: "Customer 4"},
+				},
+			},
+		},
+		"should list empty customers list when page is 2 and pageSize is 10": {
+			mock: func(mock sqlmock.Sqlmock) {
+				mock.ExpectBegin()
+
+				mock.ExpectQuery(listCustomersQuery).
+					WithArgs(10, 10).
+					WillReturnRows(sqlmock.NewRows([]string{"id", "name"}))
+
+				mock.ExpectQuery(countCustomersQuery).
+					WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(0))
+
+				mock.ExpectCommit()
+			},
+			args: args{
+				ctx:   context.Background(),
+				page:  2,
+				limit: 10,
+			},
+			want: &dto.CustomersList{
+				Meta: dto.MetadataPage{
+					TotalCount:  0,
+					TotalPages:  0,
+					PageSize:    10,
+					CurrentPage: 2,
+				},
+				Data: []model.Customer{},
+			},
+		},
+		"should throw error when transaction begin returns error": {
+			mock: func(mock sqlmock.Sqlmock) {
+				mock.ExpectBegin().WillReturnError(fmt.Errorf("begin error"))
+				mock.ExpectRollback()
+			},
+			args: args{
+				ctx:   context.Background(),
+				page:  1,
+				limit: 10,
+			},
+			wantErr: "begin error",
+		},
+		"should throw error when query returns error": {
+			mock: func(mock sqlmock.Sqlmock) {
+				mock.ExpectBegin()
+
+				mock.ExpectQuery(listCustomersQuery).
+					WillReturnError(fmt.Errorf("query error"))
+
+				mock.ExpectRollback()
+			},
+			args: args{
+				ctx:   context.Background(),
+				page:  1,
+				limit: 10,
+			},
+			wantErr: "query error",
+		},
+		"should throw error when query scan returns error": {
+			mock: func(mock sqlmock.Sqlmock) {
+				mock.ExpectBegin()
+
+				rows := sqlmock.NewRows([]string{"id", "name"}).
+					AddRow("one", "Customer 1").
+					AddRow("two", "Customer 2")
+
+				mock.ExpectQuery(listCustomersQuery).
+					WithArgs(10, 0).
+					WillReturnRows(rows)
+
+				mock.ExpectRollback()
+			},
+			args: args{
+				ctx:   context.Background(),
+				page:  1,
+				limit: 10,
+			},
+			wantErr: "sql: Scan error on column index 0, name \"id\": converting driver.Value type string (\"one\") to a int64: invalid syntax",
+		},
+		"should throw error when count returns error": {
+			mock: func(mock sqlmock.Sqlmock) {
+				mock.ExpectBegin()
+
+				mock.ExpectQuery(listCustomersQuery).
+					WithArgs(10, 0).
+					WillReturnRows(sqlmock.NewRows([]string{"id", "name"}))
+
+				mock.ExpectQuery(countCustomersQuery).
+					WillReturnError(fmt.Errorf("count error"))
+
+				mock.ExpectRollback()
+			},
+			args: args{
+				ctx:   context.Background(),
+				page:  1,
+				limit: 10,
+			},
+			wantErr: "count error",
+		},
+	}
+	for name, tt := range tests {
+		t.Run(name, func(t *testing.T) {
+			db, mock, err := sqlmock.New()
+			require.NoError(t, err)
+			defer db.Close()
+
+			tt.mock(mock)
+
+			repository := NewCustomerRepository(sqlx.NewDb(db, "postgres"))
+			got, err := repository.List(tt.args.ctx, tt.args.page, tt.args.limit)
+
+			mock.ExpectationsWereMet()
+			assert.Equal(t, tt.want, got)
+			if err != nil || tt.wantErr != "" {
+				assert.EqualError(t, err, tt.wantErr)
+			}
+		})
+	}
+}
+
 func TestCustomerRepository_Update(t *testing.T) {
 	updateCustomerQuery := `UPDATE customers SET name = \$1, ` +
 		`updated_at = \$2 ` +

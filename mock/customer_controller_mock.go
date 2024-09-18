@@ -85,6 +85,21 @@ func (mr *MockCustomerServiceMockRecorder) Find(ctx, id any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Find", reflect.TypeOf((*MockCustomerService)(nil).Find), ctx, id)
 }
 
+// List mocks base method.
+func (m *MockCustomerService) List(ctx context.Context, page, limit int) (*dto.CustomersList, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "List", ctx, page, limit)
+	ret0, _ := ret[0].(*dto.CustomersList)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// List indicates an expected call of List.
+func (mr *MockCustomerServiceMockRecorder) List(ctx, page, limit any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockCustomerService)(nil).List), ctx, page, limit)
+}
+
 // Update mocks base method.
 func (m *MockCustomerService) Update(ctx context.Context, id int64, customer dto.CustomerDataDto) (*model.Customer, error) {
 	m.ctrl.T.Helper()

@@ -6,7 +6,7 @@ type CustomerDataDto struct {
 	Name string
 }
 
-type Customers struct {
-	Data []model.Customer `json:"data"`
-	Meta Meta             `json:"meta"`
+type CustomersList struct {
+	Data []model.Customer
+	Meta MetadataPage
 }
