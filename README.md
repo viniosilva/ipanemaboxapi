@@ -30,6 +30,13 @@ make infra/test/up
 make db/test/migrate
 ```
 
+Configure variables environment
+
+```bash
+  cp .env.example .env
+  echo S3CR31 >> .env
+```
+
 Start the server
 
 ```bash
