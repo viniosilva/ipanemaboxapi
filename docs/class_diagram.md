@@ -31,7 +31,6 @@ classDiagram
         +decimal estimatedAmount
         +Date scheduledDate
         +string status
-        +array history
         +Date createdAt
         +Date updatedAt
     }
