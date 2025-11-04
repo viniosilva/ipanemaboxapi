@@ -16,7 +16,7 @@ make install
 
 2. Run DB migrations:
 ```bash
-make migrate-up
+make migrate-up POSTGRES_PASSWORD={SECRET}
 ```
 
 3. Start locally:
@@ -25,8 +25,8 @@ make dev
 ```
 
 ## API Doc
-- **Swagger UI**: `http://localhost:3000/api-docs`
-- **OpenAPI JSON**: `http://localhost:3000/api-docs.json`
+- **Swagger UI**: `http://localhost:8080/api-docs`
+- **OpenAPI JSON**: `http://localhost:8080/api-docs.json`
 
 ## Testing
 ```bash

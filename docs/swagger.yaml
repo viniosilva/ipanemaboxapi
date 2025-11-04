@@ -1,0 +1,225 @@
+definitions:
+  middleware.ServerErrorResponse:
+    properties:
+      message:
+        example: an unexpected error occurred
+        type: string
+    type: object
+  pkg.ValidationError:
+    properties:
+      error:
+        $ref: '#/definitions/pkg.ValidationErrorDetails'
+      message:
+        example: validation error
+        type: string
+    type: object
+  pkg.ValidationErrorDetails:
+    properties:
+      field:
+        example: email
+        type: string
+      message:
+        example: email is required
+        type: string
+      tag:
+        example: emailEmpty
+        type: string
+    type: object
+  presentation.LoginRequest:
+    properties:
+      email:
+        example: john.doe@example.com
+        type: string
+      password:
+        example: abcd1234!
+        type: string
+    type: object
+  presentation.LoginResponse:
+    properties:
+      token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTY4MTIwMDB9.9PqE5VHqD7kz1jZlCwVjMZHhY0K8Jb5YQbHJ5yQ5Q
+        type: string
+    type: object
+  presentation.RegisterRequest:
+    properties:
+      email:
+        example: john.doe@example.com
+        type: string
+      name:
+        example: John Doe
+        type: string
+      password:
+        example: abcd1234!
+        type: string
+      phone:
+        example: "+5511999999999"
+        type: string
+    type: object
+  presentation.RegisterResponse:
+    properties:
+      email:
+        example: john.doe@example.com
+        type: string
+      id:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+      name:
+        example: John Doe
+        type: string
+      phone:
+        example: "+5511999999999"
+        type: string
+    type: object
+  presentation.UpdateUserPasswordRequest:
+    properties:
+      new_password:
+        example: abcd1234!
+        type: string
+      old_password:
+        example: abcd1234!
+        type: string
+    type: object
+info:
+  contact: {}
+  description: API for the Ipanema Box project
+  title: Ipanema Box API
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        *Validation errors:*
+        - email: emailEmpty, emailInvalid
+        - password: passwordEmpty, userNotFound
+      parameters:
+      - description: User to login
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/presentation.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentation.LoginResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/pkg.ValidationError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/middleware.ServerErrorResponse'
+      summary: Login a user
+      tags:
+      - auth
+  /auth/logout:
+    delete:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/middleware.ServerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/middleware.ServerErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Logout a user
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        *Validation errors:*
+        - name: userNameEmpty
+        - email: emailEmpty, emailInvalid, userAlreadyExists
+        - password: passwordEmpty, passwordTooLong, passwordWeak
+        - phone: phoneInvalid
+      parameters:
+      - description: User to register
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/presentation.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/presentation.RegisterResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/pkg.ValidationError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/middleware.ServerErrorResponse'
+      summary: Register a new user
+      tags:
+      - auth
+  /auth/update-password:
+    put:
+      consumes:
+      - application/json
+      description: |-
+        *Validation errors:*
+        - old_password: passwordEmpty, invalidPassword
+        - new_password: passwordEmpty, passwordTooLong, passwordWeak
+      parameters:
+      - description: User password update data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/presentation.UpdateUserPasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/middleware.ServerErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/middleware.ServerErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/pkg.ValidationError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/middleware.ServerErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update user password
+      tags:
+      - auth
+securityDefinitions:
+  BearerAuth:
+    description: Type "Bearer" followed by a space and JWT token
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
