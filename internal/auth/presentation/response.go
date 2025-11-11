@@ -10,5 +10,11 @@ type RegisterResponse struct {
 }
 
 type LoginResponse struct {
-	Token string `json:"token" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTY4MTIwMDB9.9PqE5VHqD7kz1jZlCwVjMZHhY0K8Jb5YQbHJ5yQ5Q"`
+	AccessToken  string `json:"access_token" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTY4MTIwMDB9.9PqE5VHqD7kz1jZlCwVjMZHhY0K8Jb5YQbHJ5yQ5Q"`
+	RefreshToken string `json:"refresh_token" example:"123e4567e89b12d3a456426614174000"`
+}
+
+type RefreshTokenResponse struct {
+	AccessToken  string `json:"access_token" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTY4MTIwMDB9.9PqE5VHqD7kz1jZlCwVjMZHhY0K8Jb5YQbHJ5yQ5Q"`
+	RefreshToken string `json:"refresh_token" example:"123e4567e89b12d3a456426614174000"`
 }

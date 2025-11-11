@@ -12,4 +12,5 @@ func SetupRouter(router *gin.RouterGroup, h *AuthHandler, tokenSvc *infrastructu
 	authRouter.POST("/login", h.Login)
 	authRouter.DELETE("/logout", middleware.AuthenticateMiddleware(tokenSvc), h.Logout)
 	authRouter.PUT("/update-password", middleware.AuthenticateMiddleware(tokenSvc), h.UpdateUserPassword)
+	authRouter.POST("/refresh", h.RefreshToken)
 }

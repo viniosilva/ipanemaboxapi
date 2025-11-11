@@ -107,8 +107,22 @@ func makeDIContainer() *DIContainer {
 		DB:       cacheDB,
 	})
 
+	tokenJWTExpiresAtInMinutes, err := strconv.ParseInt(os.Getenv("TOKEN_JWT_EXPIRES_AT_IN_MIN"), 10, 64)
+	if err != nil {
+		log.Fatalf("failed to convert TOKEN_JWT_EXPIRES_AT to int: %v", err)
+	}
+	refreshTokenExpiresAtInMinutes, err := strconv.ParseInt(os.Getenv("REFRESH_TOKEN_EXPIRES_AT_IN_MIN"), 10, 64)
+	if err != nil {
+		log.Fatalf("failed to convert REFRESH_TOKEN_EXPIRES_AT to int: %v", err)
+	}
+
 	tokenRepo := infrastructure.NewRedisTokenRepository(cache, "token")
-	tokenSvc := infrastructure.NewTokenService(tokenRepo, "ipanemabox-api", "secret", 1*time.Hour)
+	tokenSvc := infrastructure.NewTokenService(tokenRepo,
+		os.Getenv("SERVICE_NAME"),
+		os.Getenv("TOKEN_SECRET_KEY"),
+		time.Duration(tokenJWTExpiresAtInMinutes)*time.Minute,
+		time.Duration(refreshTokenExpiresAtInMinutes)*time.Minute,
+	)
 
 	authRepo := infrastructure.NewUserRepository(db)
 	authSvc := application.NewAuthService(authRepo, tokenSvc)

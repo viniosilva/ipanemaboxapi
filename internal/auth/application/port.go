@@ -13,6 +13,7 @@ type AuthService interface {
 	Login(ctx context.Context, input LoginInput) (LoginOutput, error)
 	Logout(ctx context.Context, userID uuid.UUID) error
 	UpdateUserPassword(ctx context.Context, input UpdateUserPasswordInput) error
+	RefreshToken(ctx context.Context, refreshToken string) (RefreshTokenOutput, error)
 }
 
 type UserRepository interface {
@@ -24,7 +25,9 @@ type UserRepository interface {
 }
 
 type TokenService interface {
-	GenerateTokenJWT(ctx context.Context, user domain.User) (string, error)
+	GenerateTokenJWT(ctx context.Context, userID uuid.UUID) (string, error)
 	ValidateTokenJWT(ctx context.Context, tokenString string) (infrastructure.TokenJWTClaims, error)
 	RevokeTokenJWT(ctx context.Context, userID uuid.UUID) error
+	GenerateRefreshToken(ctx context.Context, userID uuid.UUID) (string, error)
+	GetRefreshTokenUserID(ctx context.Context, refreshToken string) (uuid.UUID, error)
 }

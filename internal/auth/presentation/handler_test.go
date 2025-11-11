@@ -21,9 +21,10 @@ import (
 var ctxMock = mock.AnythingOfType("context.backgroundCtx")
 
 const (
-	serviceName = "ipanema-box-api"
-	secretKey   = "test_secret_key"
-	expiresAt   = 1 * time.Minute
+	serviceName           = "ipanema-box-api"
+	secretKey             = "test_secret_key"
+	tokenJWTExpiresAt     = 1 * time.Minute
+	refreshTokenExpiresAt = 7 * 24 * time.Hour // 7 days
 )
 
 func TestAuthHandler_Register(t *testing.T) {
@@ -112,12 +113,17 @@ func TestAuthHandler_Login(t *testing.T) {
 			mock.AnythingOfType("string"),
 			mock.AnythingOfType("time.Duration"),
 		).Return(nil)
+		tokenRepoMock.On("SetRefreshToken", ctxMock,
+			mock.AnythingOfType("string"),
+			userMock.ID,
+			mock.AnythingOfType("time.Duration"),
+		).Return(nil)
 
 		router := setupRouter(userRepoMock, tokenRepoMock)
 		w, res := pkg.MakeRequestWithResponse[presentation.LoginResponse](t, router, http.MethodPost, "/api/auth/login", reqBody)
 
 		assert.Equal(t, http.StatusOK, w.Code)
-		assert.NotEmpty(t, res.Token)
+		assert.NotEmpty(t, res.AccessToken)
 	})
 
 	t.Run("should throw error when user not exists", func(t *testing.T) {
@@ -175,8 +181,8 @@ func TestAuthHandler_UpdateUserPassword(t *testing.T) {
 			mock.AnythingOfType("infrastructure.TokenJWTClaims"),
 		).Return(true, nil)
 
-		tokenSvc := infrastructure.NewTokenService(tokenRepoMock, serviceName, secretKey, expiresAt)
-		token, err := tokenSvc.GenerateTokenJWT(t.Context(), *userMock)
+		tokenSvc := infrastructure.NewTokenService(tokenRepoMock, serviceName, secretKey, tokenJWTExpiresAt, refreshTokenExpiresAt)
+		token, err := tokenSvc.GenerateTokenJWT(t.Context(), userMock.ID)
 		require.NoError(t, err)
 
 		router := setupRouter(userRepoMock, tokenRepoMock)
@@ -204,8 +210,8 @@ func TestAuthHandler_UpdateUserPassword(t *testing.T) {
 			mock.AnythingOfType("infrastructure.TokenJWTClaims"),
 		).Return(true, nil)
 
-		tokenSvc := infrastructure.NewTokenService(tokenRepoMock, serviceName, secretKey, expiresAt)
-		token, err := tokenSvc.GenerateTokenJWT(t.Context(), *userMock)
+		tokenSvc := infrastructure.NewTokenService(tokenRepoMock, serviceName, secretKey, tokenJWTExpiresAt, refreshTokenExpiresAt)
+		token, err := tokenSvc.GenerateTokenJWT(t.Context(), userMock.ID)
 		require.NoError(t, err)
 
 		router := setupRouter(userRepoMock, tokenRepoMock)
@@ -236,7 +242,7 @@ func TestAuthHandler_UpdateUserPassword(t *testing.T) {
 }
 
 func setupRouter(userRepoMock *mocks.MockUserRepository, tokenRepoMock *mocks.MockTokenRepository) *gin.Engine {
-	tokenSvc := infrastructure.NewTokenService(tokenRepoMock, serviceName, secretKey, expiresAt)
+	tokenSvc := infrastructure.NewTokenService(tokenRepoMock, serviceName, secretKey, tokenJWTExpiresAt, refreshTokenExpiresAt)
 	authSvc := application.NewAuthService(userRepoMock, tokenSvc)
 	handler := presentation.NewAuthHandler(authSvc)
 

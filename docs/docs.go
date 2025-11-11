@@ -97,9 +97,55 @@ const docTemplate = `{
                 }
             }
         },
+        "/auth/refresh": {
+            "post": {
+                "description": "Refresh access token using refresh token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Refresh access token",
+                "parameters": [
+                    {
+                        "description": "Refresh token",
+                        "name": "refresh",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/presentation.RefreshTokenRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presentation.RefreshTokenResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/middleware.ServerErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/middleware.ServerErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/register": {
             "post": {
-                "description": "*Validation errors:*\n- name: userNameEmpty\n- email: emailEmpty, emailInvalid, userAlreadyExists\n- password: passwordEmpty, passwordTooLong, passwordWeak\n- phone: phoneInvalid",
+                "description": "*Validation errors:*\n- name: userNameEmpty\n- email: emailEmpty, emailInvalid, userAlreadyExists\n- password: passwordEmpty, passwordTooLong, passwordWeak\n- phone: phoneEmpty, phoneInvalid",
                 "consumes": [
                     "application/json"
                 ],
@@ -259,9 +305,35 @@ const docTemplate = `{
         "presentation.LoginResponse": {
             "type": "object",
             "properties": {
-                "token": {
+                "access_token": {
                     "type": "string",
                     "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTY4MTIwMDB9.9PqE5VHqD7kz1jZlCwVjMZHhY0K8Jb5YQbHJ5yQ5Q"
+                },
+                "refresh_token": {
+                    "type": "string",
+                    "example": "123e4567e89b12d3a456426614174000"
+                }
+            }
+        },
+        "presentation.RefreshTokenRequest": {
+            "type": "object",
+            "properties": {
+                "refresh_token": {
+                    "type": "string",
+                    "example": "123e4567e89b12d3a456426614174000"
+                }
+            }
+        },
+        "presentation.RefreshTokenResponse": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTY4MTIwMDB9.9PqE5VHqD7kz1jZlCwVjMZHhY0K8Jb5YQbHJ5yQ5Q"
+                },
+                "refresh_token": {
+                    "type": "string",
+                    "example": "123e4567e89b12d3a456426614174000"
                 }
             }
         },

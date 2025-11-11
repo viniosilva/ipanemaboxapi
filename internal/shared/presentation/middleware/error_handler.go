@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -20,29 +21,37 @@ func ErrorHandler() gin.HandlerFunc {
 		c.Next()
 
 		if len(c.Errors) > 0 {
-			switch v := c.Errors.Last().Err.(type) {
-			case pkg.ValidationError:
-				c.JSON(http.StatusUnprocessableEntity, v)
-			case pkg.DomainError:
-				switch v.Code() {
+			err := c.Errors.Last().Err
+
+			var domainErr pkg.DomainError
+			if errors.As(err, &domainErr) {
+				switch domainErr.Code() {
 				case ErrAuthHeaderRequired.Code(),
 					ErrAuthHeaderPrefixInvalid.Code(),
 					ErrInvalidToken.Code(),
 					ErrTokenUserIDNotExists.Code(),
 					ErrInvalidUserID.Code():
 					c.JSON(http.StatusUnauthorized, ServerErrorResponse{
-						Message: v.Error(),
+						Message: domainErr.Error(),
 					})
+					return
 				default:
 					c.JSON(http.StatusInternalServerError, ServerErrorResponse{
 						Message: internalServerErrorMessage,
 					})
+					return
 				}
-			default:
-				c.JSON(http.StatusInternalServerError, ServerErrorResponse{
-					Message: internalServerErrorMessage,
-				})
 			}
+
+			var validationErr pkg.ValidationError
+			if errors.As(err, &validationErr) {
+				c.JSON(http.StatusUnprocessableEntity, validationErr)
+				return
+			}
+
+			c.JSON(http.StatusInternalServerError, ServerErrorResponse{
+				Message: internalServerErrorMessage,
+			})
 		}
 	}
 }

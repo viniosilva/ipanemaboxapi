@@ -98,13 +98,19 @@ func (s *AuthServiceImpl) Login(ctx context.Context, input LoginInput) (LoginOut
 		return LoginOutput{}, ErrUserNotFound
 	}
 
-	token, err := s.tokenService.GenerateTokenJWT(ctx, *user)
+	token, err := s.tokenService.GenerateTokenJWT(ctx, user.ID)
+	if err != nil {
+		return LoginOutput{}, err
+	}
+
+	refreshToken, err := s.tokenService.GenerateRefreshToken(ctx, user.ID)
 	if err != nil {
 		return LoginOutput{}, err
 	}
 
 	return LoginOutput{
-		Token: token,
+		AccessToken:  token,
+		RefreshToken: refreshToken,
 	}, nil
 }
 
@@ -136,4 +142,26 @@ func (s *AuthServiceImpl) UpdateUserPassword(ctx context.Context, input UpdateUs
 	}
 
 	return s.userRepo.UpdateUser(ctx, user)
+}
+
+func (s *AuthServiceImpl) RefreshToken(ctx context.Context, refreshToken string) (RefreshTokenOutput, error) {
+	userID, err := s.tokenService.GetRefreshTokenUserID(ctx, refreshToken)
+	if err != nil {
+		return RefreshTokenOutput{}, err
+	}
+
+	token, err := s.tokenService.GenerateTokenJWT(ctx, userID)
+	if err != nil {
+		return RefreshTokenOutput{}, err
+	}
+
+	newRefreshToken, err := s.tokenService.GenerateRefreshToken(ctx, userID)
+	if err != nil {
+		return RefreshTokenOutput{}, err
+	}
+
+	return RefreshTokenOutput{
+		AccessToken:  token,
+		RefreshToken: newRefreshToken,
+	}, nil
 }

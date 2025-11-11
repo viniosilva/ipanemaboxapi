@@ -1,6 +1,7 @@
 package presentation
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -25,7 +26,7 @@ func NewAuthHandler(authService application.AuthService) *AuthHandler {
 // @Description - name: userNameEmpty
 // @Description - email: emailEmpty, emailInvalid, userAlreadyExists
 // @Description - password: passwordEmpty, passwordTooLong, passwordWeak
-// @Description - phone: phoneInvalid
+// @Description - phone: phoneEmpty, phoneInvalid
 // @Tags auth
 // @Accept json
 // @Produce json
@@ -105,7 +106,8 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, LoginResponse{
-		Token: token.Token,
+		AccessToken:  token.AccessToken,
+		RefreshToken: token.RefreshToken,
 	})
 }
 
@@ -180,4 +182,33 @@ func (h *AuthHandler) UpdateUserPassword(c *gin.Context) {
 	}
 
 	c.Status(http.StatusNoContent)
+}
+
+// @Summary Refresh access token
+// @Description Refresh access token using refresh token
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param refresh body RefreshTokenRequest true "Refresh token"
+// @Success 200 {object} RefreshTokenResponse
+// @Failure 401 {object} middleware.ServerErrorResponse "Unauthorized"
+// @Failure 500 {object} middleware.ServerErrorResponse "Internal Server Error"
+// @Router /auth/refresh [post]
+func (h *AuthHandler) RefreshToken(c *gin.Context) {
+	var req RefreshTokenRequest
+	if err := c.BindJSON(&req); err != nil {
+		c.Error(err)
+		return
+	}
+
+	token, err := h.authService.RefreshToken(c.Request.Context(), req.RefreshToken)
+	if err != nil {
+		c.Error(errors.Join(middleware.ErrInvalidToken, err))
+		return
+	}
+
+	c.JSON(http.StatusOK, RefreshTokenResponse{
+		AccessToken:  token.AccessToken,
+		RefreshToken: token.RefreshToken,
+	})
 }

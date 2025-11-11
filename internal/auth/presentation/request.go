@@ -17,7 +17,7 @@ var RegisterRequestValidations = pkg.MapValidationErrors{
 	"name":     {domain.ErrUserNameEmpty},
 	"email":    {domain.ErrEmailEmpty, domain.ErrEmailInvalid, application.ErrUserAlreadyExists},
 	"password": {domain.ErrPasswordEmpty, domain.ErrPasswordTooLong, domain.ErrPasswordWeak},
-	"phone":    {domain.ErrPhoneInvalid},
+	"phone":    {domain.ErrPhoneInvalid, domain.ErrPhoneInvalid},
 }
 
 type LoginRequest struct {
@@ -38,4 +38,8 @@ type UpdateUserPasswordRequest struct {
 var UpdateUserPasswordRequestValidations = pkg.MapValidationErrors{
 	"old_password": {domain.ErrPasswordEmpty, domain.ErrInvalidPassword},
 	"new_password": {domain.ErrPasswordEmpty, domain.ErrPasswordTooLong, domain.ErrPasswordWeak},
+}
+
+type RefreshTokenRequest struct {
+	RefreshToken string `json:"refresh_token" example:"123e4567e89b12d3a456426614174000"`
 }

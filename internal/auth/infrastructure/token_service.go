@@ -2,30 +2,37 @@ package infrastructure
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
-	"github.com/viniosilva/ipanemaboxapi/internal/auth/domain"
 )
 
 var ErrInvalidToken = errors.New("invalid token")
 
+const (
+	RefreshTokenLength = 64
+)
+
 type TokenService struct {
-	tokenRepo   TokenRepository
-	serviceName string
-	secretKey   []byte
-	expiresAt   time.Duration
+	tokenRepo             TokenRepository
+	serviceName           string
+	secretKey             []byte
+	tokenJWTExpiresAt     time.Duration
+	refreshTokenExpiresAt time.Duration
 }
 
-func NewTokenService(tokenRepo TokenRepository, serviceName, secretKey string, expiresAt time.Duration) *TokenService {
+func NewTokenService(tokenRepo TokenRepository, serviceName, secretKey string, tokenJWTExpiresAt, refreshTokenExpiresAt time.Duration) *TokenService {
 	return &TokenService{
-		tokenRepo:   tokenRepo,
-		serviceName: serviceName,
-		secretKey:   []byte(secretKey),
-		expiresAt:   expiresAt,
+		tokenRepo:             tokenRepo,
+		serviceName:           serviceName,
+		secretKey:             []byte(secretKey),
+		tokenJWTExpiresAt:     tokenJWTExpiresAt,
+		refreshTokenExpiresAt: refreshTokenExpiresAt,
 	}
 }
 
@@ -33,18 +40,18 @@ type TokenJWTClaims struct {
 	jwt.RegisteredClaims
 }
 
-func (s *TokenService) GenerateTokenJWT(ctx context.Context, user domain.User) (string, error) {
+func (s *TokenService) GenerateTokenJWT(ctx context.Context, userID uuid.UUID) (string, error) {
 	now := time.Now()
 
 	claims := TokenJWTClaims{
 		RegisteredClaims: jwt.RegisteredClaims{
 			ID:        uuid.New().String(),
-			ExpiresAt: jwt.NewNumericDate(now.Add(s.expiresAt)),
+			ExpiresAt: jwt.NewNumericDate(now.Add(s.tokenJWTExpiresAt)),
 			IssuedAt:  jwt.NewNumericDate(now),
 			NotBefore: jwt.NewNumericDate(now),
 			Issuer:    s.serviceName,
 			Audience:  jwt.ClaimStrings{s.serviceName},
-			Subject:   user.ID.String(),
+			Subject:   userID.String(),
 		},
 	}
 
@@ -54,7 +61,7 @@ func (s *TokenService) GenerateTokenJWT(ctx context.Context, user domain.User) (
 		return "", errors.Join(ErrInvalidToken, err)
 	}
 
-	if err = s.tokenRepo.SetTokenJWT(ctx, claims, tokenStr, s.expiresAt); err != nil {
+	if err = s.tokenRepo.SetTokenJWT(ctx, claims, tokenStr, s.tokenJWTExpiresAt); err != nil {
 		return "", err
 	}
 
@@ -87,5 +94,27 @@ func (s *TokenService) RevokeTokenJWT(ctx context.Context, userID uuid.UUID) err
 		return fmt.Errorf("failed to revoke token: %w", err)
 	}
 
+	if err := s.tokenRepo.DeleteUserRefreshTokens(ctx, userID); err != nil {
+		return fmt.Errorf("failed to delete user refresh tokens: %w", err)
+	}
+
 	return nil
+}
+
+func (s *TokenService) GenerateRefreshToken(ctx context.Context, userID uuid.UUID) (string, error) {
+	bytes := make([]byte, RefreshTokenLength/2) // divide by 2 because each byte is 2 characters in hex
+	if _, err := rand.Read(bytes); err != nil {
+		return "", fmt.Errorf("failed to generate refresh token: %w", err)
+	}
+
+	refreshToken := hex.EncodeToString(bytes)
+	if err := s.tokenRepo.SetRefreshToken(ctx, refreshToken, userID, s.refreshTokenExpiresAt); err != nil {
+		return "", fmt.Errorf("failed to set refresh token: %w", err)
+	}
+
+	return refreshToken, nil
+}
+
+func (s *TokenService) GetRefreshTokenUserID(ctx context.Context, refreshToken string) (uuid.UUID, error) {
+	return s.tokenRepo.GetUserIDByRefreshToken(ctx, refreshToken)
 }

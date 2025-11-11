@@ -36,8 +36,26 @@ definitions:
     type: object
   presentation.LoginResponse:
     properties:
-      token:
+      access_token:
         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTY4MTIwMDB9.9PqE5VHqD7kz1jZlCwVjMZHhY0K8Jb5YQbHJ5yQ5Q
+        type: string
+      refresh_token:
+        example: 123e4567e89b12d3a456426614174000
+        type: string
+    type: object
+  presentation.RefreshTokenRequest:
+    properties:
+      refresh_token:
+        example: 123e4567e89b12d3a456426614174000
+        type: string
+    type: object
+  presentation.RefreshTokenResponse:
+    properties:
+      access_token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTY4MTIwMDB9.9PqE5VHqD7kz1jZlCwVjMZHhY0K8Jb5YQbHJ5yQ5Q
+        type: string
+      refresh_token:
+        example: 123e4567e89b12d3a456426614174000
         type: string
     type: object
   presentation.RegisterRequest:
@@ -140,6 +158,36 @@ paths:
       summary: Logout a user
       tags:
       - auth
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Refresh access token using refresh token
+      parameters:
+      - description: Refresh token
+        in: body
+        name: refresh
+        required: true
+        schema:
+          $ref: '#/definitions/presentation.RefreshTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentation.RefreshTokenResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/middleware.ServerErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/middleware.ServerErrorResponse'
+      summary: Refresh access token
+      tags:
+      - auth
   /auth/register:
     post:
       consumes:
@@ -149,7 +197,7 @@ paths:
         - name: userNameEmpty
         - email: emailEmpty, emailInvalid, userAlreadyExists
         - password: passwordEmpty, passwordTooLong, passwordWeak
-        - phone: phoneInvalid
+        - phone: phoneEmpty, phoneInvalid
       parameters:
       - description: User to register
         in: body

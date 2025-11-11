@@ -14,5 +14,11 @@ type RegisterOutput struct {
 }
 
 type LoginOutput struct {
-	Token string
+	AccessToken  string
+	RefreshToken string
+}
+
+type RefreshTokenOutput struct {
+	AccessToken  string
+	RefreshToken string
 }

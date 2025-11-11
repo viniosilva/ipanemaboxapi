@@ -170,7 +170,8 @@ func TestAuthServiceImpl_Register(t *testing.T) {
 func TestAuthServiceImpl_Login(t *testing.T) {
 	secretKey := "test_secret_key"
 	serviceName := "ipanema-box-api"
-	expiresAt := 1 * time.Minute
+	tokenJWTExpiresAt := 1 * time.Minute
+	refreshTokenExpiresAt := 7 * 24 * time.Hour // 7 days
 
 	password, err := domain.NewPassword("1a2b3c4d")
 	require.NoError(t, err)
@@ -197,13 +198,19 @@ func TestAuthServiceImpl_Login(t *testing.T) {
 			mock.AnythingOfType("string"),
 			mock.AnythingOfType("time.Duration"),
 		).Return(nil)
+		tokenRepoMock.On("SetRefreshToken",
+			mock.Anything,
+			mock.AnythingOfType("string"),
+			userRepoMock.ID,
+			refreshTokenExpiresAt,
+		).Return(nil)
 
-		tokenSvc := infrastructure.NewTokenService(tokenRepoMock, serviceName, secretKey, expiresAt)
+		tokenSvc := infrastructure.NewTokenService(tokenRepoMock, serviceName, secretKey, tokenJWTExpiresAt, refreshTokenExpiresAt)
 		s := application.NewAuthService(userRepo, tokenSvc)
 		got, gotErr := s.Login(t.Context(), input)
 
 		require.NoError(t, gotErr)
-		assert.NotEmpty(t, got.Token)
+		assert.NotEmpty(t, got.AccessToken)
 	})
 
 	t.Run("should throw error when password is empty", func(t *testing.T) {
@@ -214,7 +221,7 @@ func TestAuthServiceImpl_Login(t *testing.T) {
 
 		userRepoMock := mocks.NewMockUserRepository(t)
 
-		tokenSvc := infrastructure.NewTokenService(nil, serviceName, secretKey, expiresAt)
+		tokenSvc := infrastructure.NewTokenService(nil, serviceName, secretKey, tokenJWTExpiresAt, refreshTokenExpiresAt)
 		s := application.NewAuthService(userRepoMock, tokenSvc)
 		_, gotErr := s.Login(t.Context(), input)
 
@@ -230,7 +237,7 @@ func TestAuthServiceImpl_Login(t *testing.T) {
 
 		userRepoMock := mocks.NewMockUserRepository(t)
 
-		tokenSvc := infrastructure.NewTokenService(nil, serviceName, secretKey, expiresAt)
+		tokenSvc := infrastructure.NewTokenService(nil, serviceName, secretKey, tokenJWTExpiresAt, refreshTokenExpiresAt)
 		s := application.NewAuthService(userRepoMock, tokenSvc)
 		_, gotErr := s.Login(t.Context(), input)
 
@@ -247,7 +254,7 @@ func TestAuthServiceImpl_Login(t *testing.T) {
 		userRepoMock := mocks.NewMockUserRepository(t)
 		userRepoMock.On("GetUserByEmail", mock.Anything, mock.AnythingOfType("domain.Email")).Return(nil, infrastructure.ErrRegisterNotFound)
 
-		tokenSvc := infrastructure.NewTokenService(nil, serviceName, secretKey, expiresAt)
+		tokenSvc := infrastructure.NewTokenService(nil, serviceName, secretKey, tokenJWTExpiresAt, refreshTokenExpiresAt)
 		s := application.NewAuthService(userRepoMock, tokenSvc)
 		_, gotErr := s.Login(t.Context(), input)
 
@@ -263,7 +270,7 @@ func TestAuthServiceImpl_Login(t *testing.T) {
 		userRepoMock := mocks.NewMockUserRepository(t)
 		userRepoMock.On("GetUserByEmail", mock.Anything, mock.AnythingOfType("domain.Email")).Return(nil, assert.AnError)
 
-		tokenSvc := infrastructure.NewTokenService(nil, serviceName, secretKey, expiresAt)
+		tokenSvc := infrastructure.NewTokenService(nil, serviceName, secretKey, tokenJWTExpiresAt, refreshTokenExpiresAt)
 		s := application.NewAuthService(userRepoMock, tokenSvc)
 		_, gotErr := s.Login(t.Context(), input)
 
@@ -282,7 +289,7 @@ func TestAuthServiceImpl_Login(t *testing.T) {
 		userRepo := mocks.NewMockUserRepository(t)
 		userRepo.On("GetUserByEmail", mock.Anything, mock.AnythingOfType("domain.Email")).Return(userRepoMock, nil)
 
-		tokenSvc := infrastructure.NewTokenService(nil, serviceName, secretKey, expiresAt)
+		tokenSvc := infrastructure.NewTokenService(nil, serviceName, secretKey, tokenJWTExpiresAt, refreshTokenExpiresAt)
 		s := application.NewAuthService(userRepo, tokenSvc)
 		_, gotErr := s.Login(t.Context(), input)
 
@@ -293,14 +300,16 @@ func TestAuthServiceImpl_Login(t *testing.T) {
 func TestAuthServiceImpl_Logout(t *testing.T) {
 	serviceName := "ipanema-box-api"
 	secretKey := "test_secret_key"
-	expiresAt := 1 * time.Minute
+	tokenJWTExpiresAt := 1 * time.Minute
+	refreshTokenExpiresAt := 7 * 24 * time.Hour // 7 days
 
 	t.Run("should logout successfully", func(t *testing.T) {
 		userID := uuid.New()
 
 		tokenRepoMock := mocks.NewMockTokenRepository(t)
 		tokenRepoMock.On("DeleteTokenJWT", mock.Anything, userID).Return(nil)
-		tokenSvc := infrastructure.NewTokenService(tokenRepoMock, serviceName, secretKey, expiresAt)
+		tokenRepoMock.On("DeleteUserRefreshTokens", mock.Anything, userID).Return(nil)
+		tokenSvc := infrastructure.NewTokenService(tokenRepoMock, serviceName, secretKey, tokenJWTExpiresAt, refreshTokenExpiresAt)
 
 		s := application.NewAuthService(nil, tokenSvc)
 		gotErr := s.Logout(context.Background(), userID)
@@ -312,7 +321,7 @@ func TestAuthServiceImpl_Logout(t *testing.T) {
 
 		tokenRepoMock := mocks.NewMockTokenRepository(t)
 		tokenRepoMock.On("DeleteTokenJWT", mock.Anything, userID).Return(assert.AnError)
-		tokenSvc := infrastructure.NewTokenService(tokenRepoMock, serviceName, secretKey, expiresAt)
+		tokenSvc := infrastructure.NewTokenService(tokenRepoMock, serviceName, secretKey, tokenJWTExpiresAt, refreshTokenExpiresAt)
 
 		s := application.NewAuthService(nil, tokenSvc)
 		gotErr := s.Logout(context.Background(), userID)

@@ -40,6 +40,69 @@ func (_m *MockTokenRepository) EXPECT() *MockTokenRepository_Expecter {
 	return &MockTokenRepository_Expecter{mock: &_m.Mock}
 }
 
+// DeleteRefreshToken provides a mock function for the type MockTokenRepository
+func (_mock *MockTokenRepository) DeleteRefreshToken(ctx context.Context, userID uuid.UUID, refreshToken string) error {
+	ret := _mock.Called(ctx, userID, refreshToken)
+
+	if len(ret) == 0 {
+		panic("no return value specified for DeleteRefreshToken")
+	}
+
+	var r0 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, uuid.UUID, string) error); ok {
+		r0 = returnFunc(ctx, userID, refreshToken)
+	} else {
+		r0 = ret.Error(0)
+	}
+	return r0
+}
+
+// MockTokenRepository_DeleteRefreshToken_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DeleteRefreshToken'
+type MockTokenRepository_DeleteRefreshToken_Call struct {
+	*mock.Call
+}
+
+// DeleteRefreshToken is a helper method to define mock.On call
+//   - ctx context.Context
+//   - userID uuid.UUID
+//   - refreshToken string
+func (_e *MockTokenRepository_Expecter) DeleteRefreshToken(ctx interface{}, userID interface{}, refreshToken interface{}) *MockTokenRepository_DeleteRefreshToken_Call {
+	return &MockTokenRepository_DeleteRefreshToken_Call{Call: _e.mock.On("DeleteRefreshToken", ctx, userID, refreshToken)}
+}
+
+func (_c *MockTokenRepository_DeleteRefreshToken_Call) Run(run func(ctx context.Context, userID uuid.UUID, refreshToken string)) *MockTokenRepository_DeleteRefreshToken_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 uuid.UUID
+		if args[1] != nil {
+			arg1 = args[1].(uuid.UUID)
+		}
+		var arg2 string
+		if args[2] != nil {
+			arg2 = args[2].(string)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *MockTokenRepository_DeleteRefreshToken_Call) Return(err error) *MockTokenRepository_DeleteRefreshToken_Call {
+	_c.Call.Return(err)
+	return _c
+}
+
+func (_c *MockTokenRepository_DeleteRefreshToken_Call) RunAndReturn(run func(ctx context.Context, userID uuid.UUID, refreshToken string) error) *MockTokenRepository_DeleteRefreshToken_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // DeleteTokenJWT provides a mock function for the type MockTokenRepository
 func (_mock *MockTokenRepository) DeleteTokenJWT(ctx context.Context, userID uuid.UUID) error {
 	ret := _mock.Called(ctx, userID)
@@ -93,6 +156,131 @@ func (_c *MockTokenRepository_DeleteTokenJWT_Call) Return(err error) *MockTokenR
 }
 
 func (_c *MockTokenRepository_DeleteTokenJWT_Call) RunAndReturn(run func(ctx context.Context, userID uuid.UUID) error) *MockTokenRepository_DeleteTokenJWT_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// DeleteUserRefreshTokens provides a mock function for the type MockTokenRepository
+func (_mock *MockTokenRepository) DeleteUserRefreshTokens(ctx context.Context, userID uuid.UUID) error {
+	ret := _mock.Called(ctx, userID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for DeleteUserRefreshTokens")
+	}
+
+	var r0 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, uuid.UUID) error); ok {
+		r0 = returnFunc(ctx, userID)
+	} else {
+		r0 = ret.Error(0)
+	}
+	return r0
+}
+
+// MockTokenRepository_DeleteUserRefreshTokens_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DeleteUserRefreshTokens'
+type MockTokenRepository_DeleteUserRefreshTokens_Call struct {
+	*mock.Call
+}
+
+// DeleteUserRefreshTokens is a helper method to define mock.On call
+//   - ctx context.Context
+//   - userID uuid.UUID
+func (_e *MockTokenRepository_Expecter) DeleteUserRefreshTokens(ctx interface{}, userID interface{}) *MockTokenRepository_DeleteUserRefreshTokens_Call {
+	return &MockTokenRepository_DeleteUserRefreshTokens_Call{Call: _e.mock.On("DeleteUserRefreshTokens", ctx, userID)}
+}
+
+func (_c *MockTokenRepository_DeleteUserRefreshTokens_Call) Run(run func(ctx context.Context, userID uuid.UUID)) *MockTokenRepository_DeleteUserRefreshTokens_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 uuid.UUID
+		if args[1] != nil {
+			arg1 = args[1].(uuid.UUID)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *MockTokenRepository_DeleteUserRefreshTokens_Call) Return(err error) *MockTokenRepository_DeleteUserRefreshTokens_Call {
+	_c.Call.Return(err)
+	return _c
+}
+
+func (_c *MockTokenRepository_DeleteUserRefreshTokens_Call) RunAndReturn(run func(ctx context.Context, userID uuid.UUID) error) *MockTokenRepository_DeleteUserRefreshTokens_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetUserIDByRefreshToken provides a mock function for the type MockTokenRepository
+func (_mock *MockTokenRepository) GetUserIDByRefreshToken(ctx context.Context, refreshToken string) (uuid.UUID, error) {
+	ret := _mock.Called(ctx, refreshToken)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetUserIDByRefreshToken")
+	}
+
+	var r0 uuid.UUID
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string) (uuid.UUID, error)); ok {
+		return returnFunc(ctx, refreshToken)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string) uuid.UUID); ok {
+		r0 = returnFunc(ctx, refreshToken)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(uuid.UUID)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = returnFunc(ctx, refreshToken)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockTokenRepository_GetUserIDByRefreshToken_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetUserIDByRefreshToken'
+type MockTokenRepository_GetUserIDByRefreshToken_Call struct {
+	*mock.Call
+}
+
+// GetUserIDByRefreshToken is a helper method to define mock.On call
+//   - ctx context.Context
+//   - refreshToken string
+func (_e *MockTokenRepository_Expecter) GetUserIDByRefreshToken(ctx interface{}, refreshToken interface{}) *MockTokenRepository_GetUserIDByRefreshToken_Call {
+	return &MockTokenRepository_GetUserIDByRefreshToken_Call{Call: _e.mock.On("GetUserIDByRefreshToken", ctx, refreshToken)}
+}
+
+func (_c *MockTokenRepository_GetUserIDByRefreshToken_Call) Run(run func(ctx context.Context, refreshToken string)) *MockTokenRepository_GetUserIDByRefreshToken_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 string
+		if args[1] != nil {
+			arg1 = args[1].(string)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *MockTokenRepository_GetUserIDByRefreshToken_Call) Return(uUID uuid.UUID, err error) *MockTokenRepository_GetUserIDByRefreshToken_Call {
+	_c.Call.Return(uUID, err)
+	return _c
+}
+
+func (_c *MockTokenRepository_GetUserIDByRefreshToken_Call) RunAndReturn(run func(ctx context.Context, refreshToken string) (uuid.UUID, error)) *MockTokenRepository_GetUserIDByRefreshToken_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -159,6 +347,75 @@ func (_c *MockTokenRepository_HasTokenJWT_Call) Return(b bool, err error) *MockT
 }
 
 func (_c *MockTokenRepository_HasTokenJWT_Call) RunAndReturn(run func(ctx context.Context, claims infrastructure.TokenJWTClaims) (bool, error)) *MockTokenRepository_HasTokenJWT_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// SetRefreshToken provides a mock function for the type MockTokenRepository
+func (_mock *MockTokenRepository) SetRefreshToken(ctx context.Context, refreshToken string, userID uuid.UUID, ttl time.Duration) error {
+	ret := _mock.Called(ctx, refreshToken, userID, ttl)
+
+	if len(ret) == 0 {
+		panic("no return value specified for SetRefreshToken")
+	}
+
+	var r0 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string, uuid.UUID, time.Duration) error); ok {
+		r0 = returnFunc(ctx, refreshToken, userID, ttl)
+	} else {
+		r0 = ret.Error(0)
+	}
+	return r0
+}
+
+// MockTokenRepository_SetRefreshToken_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SetRefreshToken'
+type MockTokenRepository_SetRefreshToken_Call struct {
+	*mock.Call
+}
+
+// SetRefreshToken is a helper method to define mock.On call
+//   - ctx context.Context
+//   - refreshToken string
+//   - userID uuid.UUID
+//   - ttl time.Duration
+func (_e *MockTokenRepository_Expecter) SetRefreshToken(ctx interface{}, refreshToken interface{}, userID interface{}, ttl interface{}) *MockTokenRepository_SetRefreshToken_Call {
+	return &MockTokenRepository_SetRefreshToken_Call{Call: _e.mock.On("SetRefreshToken", ctx, refreshToken, userID, ttl)}
+}
+
+func (_c *MockTokenRepository_SetRefreshToken_Call) Run(run func(ctx context.Context, refreshToken string, userID uuid.UUID, ttl time.Duration)) *MockTokenRepository_SetRefreshToken_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 string
+		if args[1] != nil {
+			arg1 = args[1].(string)
+		}
+		var arg2 uuid.UUID
+		if args[2] != nil {
+			arg2 = args[2].(uuid.UUID)
+		}
+		var arg3 time.Duration
+		if args[3] != nil {
+			arg3 = args[3].(time.Duration)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+			arg3,
+		)
+	})
+	return _c
+}
+
+func (_c *MockTokenRepository_SetRefreshToken_Call) Return(err error) *MockTokenRepository_SetRefreshToken_Call {
+	_c.Call.Return(err)
+	return _c
+}
+
+func (_c *MockTokenRepository_SetRefreshToken_Call) RunAndReturn(run func(ctx context.Context, refreshToken string, userID uuid.UUID, ttl time.Duration) error) *MockTokenRepository_SetRefreshToken_Call {
 	_c.Call.Return(run)
 	return _c
 }
