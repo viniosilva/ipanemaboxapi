@@ -184,8 +184,11 @@ func (h *AuthHandler) UpdateUserPassword(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
+// RefreshToken godoc
 // @Summary Refresh access token
 // @Description Refresh access token using refresh token
+// @Description *Errors:*
+// @Description - invalidToken
 // @Tags auth
 // @Accept json
 // @Produce json

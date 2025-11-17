@@ -17,7 +17,7 @@ var RegisterRequestValidations = pkg.MapValidationErrors{
 	"name":     {domain.ErrUserNameEmpty},
 	"email":    {domain.ErrEmailEmpty, domain.ErrEmailInvalid, application.ErrUserAlreadyExists},
 	"password": {domain.ErrPasswordEmpty, domain.ErrPasswordTooLong, domain.ErrPasswordWeak},
-	"phone":    {domain.ErrPhoneInvalid, domain.ErrPhoneInvalid},
+	"phone":    {domain.ErrPhoneEmpty, domain.ErrPhoneInvalid},
 }
 
 type LoginRequest struct {

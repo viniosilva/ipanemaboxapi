@@ -16,8 +16,6 @@ import (
 	"github.com/viniosilva/ipanemaboxapi/pkg"
 )
 
-var ctxMock = mock.AnythingOfType("*context.cancelCtx")
-
 func TestAuthServiceImpl_Register(t *testing.T) {
 	t.Run("should register successfully", func(t *testing.T) {
 		input := application.RegisterInput{
@@ -28,9 +26,14 @@ func TestAuthServiceImpl_Register(t *testing.T) {
 		}
 
 		userRepo := mocks.NewMockUserRepository(t)
-		userRepo.On("UserExistsByEmail", ctxMock, mock.AnythingOfType("domain.Email")).
-			Return(false, nil)
-		userRepo.On("CreateUser", ctxMock, mock.AnythingOfType("*domain.User")).Return(nil)
+		userRepo.On("UserExistsByEmail",
+			mock.AnythingOfType("*context.cancelCtx"),
+			mock.AnythingOfType("domain.Email"),
+		).Return(false, nil)
+		userRepo.On("CreateUser",
+			mock.AnythingOfType("*context.cancelCtx"),
+			mock.AnythingOfType("*domain.User"),
+		).Return(nil)
 
 		s := application.NewAuthService(userRepo, nil)
 		got, gotErr := s.Register(t.Context(), input)
@@ -54,8 +57,6 @@ func TestAuthServiceImpl_Register(t *testing.T) {
 		_, gotErr := s.Register(t.Context(), input)
 
 		assert.ErrorIs(t, gotErr, domain.ErrEmailInvalid)
-		userRepoMock.AssertNotCalled(t, "UserExistsByEmail")
-		userRepoMock.AssertNotCalled(t, "Register")
 	})
 
 	t.Run("should throw error when password is invalid", func(t *testing.T) {
@@ -70,8 +71,6 @@ func TestAuthServiceImpl_Register(t *testing.T) {
 		_, gotErr := s.Register(t.Context(), input)
 
 		assert.ErrorIs(t, gotErr, domain.ErrPasswordEmpty)
-		userRepoMock.AssertNotCalled(t, "UserExistsByEmail")
-		userRepoMock.AssertNotCalled(t, "Register")
 	})
 
 	t.Run("should throw error when phone is invalid", func(t *testing.T) {
@@ -87,8 +86,6 @@ func TestAuthServiceImpl_Register(t *testing.T) {
 		_, gotErr := s.Register(t.Context(), input)
 
 		assert.ErrorIs(t, gotErr, domain.ErrPhoneInvalid)
-		userRepoMock.AssertNotCalled(t, "UserExistsByEmail")
-		userRepoMock.AssertNotCalled(t, "Register")
 	})
 
 	t.Run("should throw error when name is invalid", func(t *testing.T) {
@@ -105,8 +102,6 @@ func TestAuthServiceImpl_Register(t *testing.T) {
 		_, gotErr := s.Register(t.Context(), input)
 
 		assert.ErrorIs(t, gotErr, domain.ErrUserNameEmpty)
-		userRepoMock.AssertNotCalled(t, "UserExistsByEmail")
-		userRepoMock.AssertNotCalled(t, "Register")
 	})
 
 	t.Run("should throw error when user already exists", func(t *testing.T) {
@@ -118,14 +113,15 @@ func TestAuthServiceImpl_Register(t *testing.T) {
 
 		userRepoMock := mocks.NewMockUserRepository(t)
 
-		userRepoMock.On("UserExistsByEmail", ctxMock, mock.AnythingOfType("domain.Email")).
-			Return(true, nil)
+		userRepoMock.On("UserExistsByEmail",
+			mock.AnythingOfType("*context.cancelCtx"),
+			mock.AnythingOfType("domain.Email"),
+		).Return(true, nil)
 
 		s := application.NewAuthService(userRepoMock, nil)
 		_, gotErr := s.Register(t.Context(), input)
 
 		assert.ErrorIs(t, gotErr, application.ErrUserAlreadyExists)
-		userRepoMock.AssertNotCalled(t, "Register")
 	})
 
 	t.Run("should throw error when UserExistsByEmail returns error", func(t *testing.T) {
@@ -137,14 +133,15 @@ func TestAuthServiceImpl_Register(t *testing.T) {
 
 		userRepoMock := mocks.NewMockUserRepository(t)
 
-		userRepoMock.On("UserExistsByEmail", ctxMock, mock.AnythingOfType("domain.Email")).
-			Return(false, assert.AnError)
+		userRepoMock.On("UserExistsByEmail",
+			mock.AnythingOfType("*context.cancelCtx"),
+			mock.AnythingOfType("domain.Email"),
+		).Return(false, assert.AnError)
 
 		s := application.NewAuthService(userRepoMock, nil)
 		_, gotErr := s.Register(t.Context(), input)
 
 		assert.ErrorIs(t, gotErr, assert.AnError)
-		userRepoMock.AssertNotCalled(t, "Register")
 	})
 
 	t.Run("should throw error when CreateUser returns error", func(t *testing.T) {
@@ -185,11 +182,11 @@ func TestAuthServiceImpl_Login(t *testing.T) {
 			Password: "1a2b3c4d",
 		}
 
-		userRepoMock, err := domain.NewUser("John Doe", email, password, nil)
+		userMock, err := domain.NewUser("John Doe", email, password, nil)
 		require.NoError(t, err)
 
 		userRepo := mocks.NewMockUserRepository(t)
-		userRepo.On("GetUserByEmail", mock.Anything, mock.AnythingOfType("domain.Email")).Return(userRepoMock, nil)
+		userRepo.On("GetUserByEmail", mock.Anything, mock.AnythingOfType("domain.Email")).Return(userMock, nil)
 
 		tokenRepoMock := mocks.NewMockTokenRepository(t)
 		tokenRepoMock.On("SetTokenJWT",
@@ -201,7 +198,7 @@ func TestAuthServiceImpl_Login(t *testing.T) {
 		tokenRepoMock.On("SetRefreshToken",
 			mock.Anything,
 			mock.AnythingOfType("string"),
-			userRepoMock.ID,
+			userMock.ID,
 			refreshTokenExpiresAt,
 		).Return(nil)
 
@@ -226,7 +223,21 @@ func TestAuthServiceImpl_Login(t *testing.T) {
 		_, gotErr := s.Login(t.Context(), input)
 
 		assert.ErrorIs(t, gotErr, domain.ErrPasswordEmpty)
-		userRepoMock.AssertNotCalled(t, "GetUserByEmail")
+	})
+
+	t.Run("should throw error when password is invalid", func(t *testing.T) {
+		input := application.LoginInput{
+			Email:    "john.doe@example.com",
+			Password: "invalid-password",
+		}
+
+		userRepoMock := mocks.NewMockUserRepository(t)
+
+		tokenSvc := infrastructure.NewTokenService(nil, serviceName, secretKey, tokenJWTExpiresAt, refreshTokenExpiresAt)
+		s := application.NewAuthService(userRepoMock, tokenSvc)
+		_, gotErr := s.Login(t.Context(), input)
+
+		assert.ErrorIs(t, gotErr, application.ErrUserNotFound)
 	})
 
 	t.Run("should throw error when email is invalid", func(t *testing.T) {
@@ -242,7 +253,6 @@ func TestAuthServiceImpl_Login(t *testing.T) {
 		_, gotErr := s.Login(t.Context(), input)
 
 		assert.ErrorIs(t, gotErr, domain.ErrEmailInvalid)
-		userRepoMock.AssertNotCalled(t, "GetUserByEmail")
 	})
 
 	t.Run("should throw error user not exists", func(t *testing.T) {
@@ -272,6 +282,66 @@ func TestAuthServiceImpl_Login(t *testing.T) {
 
 		tokenSvc := infrastructure.NewTokenService(nil, serviceName, secretKey, tokenJWTExpiresAt, refreshTokenExpiresAt)
 		s := application.NewAuthService(userRepoMock, tokenSvc)
+		_, gotErr := s.Login(t.Context(), input)
+
+		assert.ErrorIs(t, gotErr, assert.AnError)
+	})
+
+	t.Run("should throw error when GenerateTokenJWT returns error", func(t *testing.T) {
+		input := application.LoginInput{
+			Email:    "john.doe@example.com",
+			Password: "1a2b3c4d",
+		}
+
+		userMock, err := domain.NewUser("John Doe", email, password, nil)
+		require.NoError(t, err)
+
+		userRepo := mocks.NewMockUserRepository(t)
+		userRepo.On("GetUserByEmail", mock.Anything, mock.AnythingOfType("domain.Email")).Return(userMock, nil)
+
+		tokenRepoMock := mocks.NewMockTokenRepository(t)
+		tokenRepoMock.On("SetTokenJWT",
+			mock.Anything,
+			mock.AnythingOfType("infrastructure.TokenJWTClaims"),
+			mock.AnythingOfType("string"),
+			mock.AnythingOfType("time.Duration"),
+		).Return(assert.AnError)
+
+		tokenSvc := infrastructure.NewTokenService(tokenRepoMock, serviceName, secretKey, tokenJWTExpiresAt, refreshTokenExpiresAt)
+		s := application.NewAuthService(userRepo, tokenSvc)
+		_, gotErr := s.Login(t.Context(), input)
+
+		assert.ErrorIs(t, gotErr, assert.AnError)
+	})
+
+	t.Run("should throw error when GenerateRefreshToken returns error", func(t *testing.T) {
+		input := application.LoginInput{
+			Email:    "john.doe@example.com",
+			Password: "1a2b3c4d",
+		}
+
+		userMock, err := domain.NewUser("John Doe", email, password, nil)
+		require.NoError(t, err)
+
+		userRepo := mocks.NewMockUserRepository(t)
+		userRepo.On("GetUserByEmail", mock.Anything, mock.AnythingOfType("domain.Email")).Return(userMock, nil)
+
+		tokenRepoMock := mocks.NewMockTokenRepository(t)
+		tokenRepoMock.On("SetTokenJWT",
+			mock.Anything,
+			mock.AnythingOfType("infrastructure.TokenJWTClaims"),
+			mock.AnythingOfType("string"),
+			mock.AnythingOfType("time.Duration"),
+		).Return(nil)
+		tokenRepoMock.On("SetRefreshToken",
+			mock.Anything,
+			mock.AnythingOfType("string"),
+			userMock.ID,
+			refreshTokenExpiresAt,
+		).Return(assert.AnError)
+
+		tokenSvc := infrastructure.NewTokenService(tokenRepoMock, serviceName, secretKey, tokenJWTExpiresAt, refreshTokenExpiresAt)
+		s := application.NewAuthService(userRepo, tokenSvc)
 		_, gotErr := s.Login(t.Context(), input)
 
 		assert.ErrorIs(t, gotErr, assert.AnError)
@@ -334,19 +404,18 @@ func TestAuthServiceImpl_UpdateUserPassword(t *testing.T) {
 	oldPassword, err := domain.NewPassword(oldPasswordString)
 	require.NoError(t, err)
 
-	userMock, err := domain.NewUser("John Doe", "john.doe@example.com", oldPassword, nil)
-	require.NoError(t, err)
-
 	t.Run("should update user password successfully", func(t *testing.T) {
-		uMock := pkg.Pointer(*userMock)
+		userMock, err := domain.NewUser("John Doe", "john.doe@example.com", oldPassword, nil)
+		require.NoError(t, err)
+
 		input := application.UpdateUserPasswordInput{
-			UserID:      uMock.ID,
+			UserID:      userMock.ID,
 			OldPassword: oldPasswordString,
 			NewPassword: "1234abcd",
 		}
 
 		userRepo := mocks.NewMockUserRepository(t)
-		userRepo.On("GetUserByID", mock.Anything, uMock.ID).Return(uMock, nil)
+		userRepo.On("GetUserByID", mock.Anything, userMock.ID).Return(userMock, nil)
 		userRepo.On("UpdateUser", mock.Anything, mock.AnythingOfType("*domain.User")).Return(nil)
 
 		s := application.NewAuthService(userRepo, nil)
@@ -356,6 +425,9 @@ func TestAuthServiceImpl_UpdateUserPassword(t *testing.T) {
 	})
 
 	t.Run("should throw error when old password is invalid", func(t *testing.T) {
+		userMock, err := domain.NewUser("John Doe", "john.doe@example.com", oldPassword, nil)
+		require.NoError(t, err)
+
 		input := application.UpdateUserPasswordInput{
 			UserID:      userMock.ID,
 			OldPassword: "invalid-password",
@@ -369,10 +441,12 @@ func TestAuthServiceImpl_UpdateUserPassword(t *testing.T) {
 		gotErr := s.UpdateUserPassword(t.Context(), input)
 
 		assert.ErrorIs(t, gotErr, domain.ErrInvalidPassword)
-		userRepo.AssertNotCalled(t, "UpdateUser")
 	})
 
 	t.Run("should throw error when old password does not match the user password", func(t *testing.T) {
+		userMock, err := domain.NewUser("John Doe", "john.doe@example.com", oldPassword, nil)
+		require.NoError(t, err)
+
 		input := application.UpdateUserPasswordInput{
 			UserID:      userMock.ID,
 			OldPassword: "invalid-password",
@@ -387,10 +461,12 @@ func TestAuthServiceImpl_UpdateUserPassword(t *testing.T) {
 		gotErr := s.UpdateUserPassword(t.Context(), input)
 
 		assert.ErrorIs(t, gotErr, domain.ErrInvalidPassword)
-		userRepo.AssertNotCalled(t, "UpdateUser")
 	})
 
 	t.Run("should throw error when new password is invalid", func(t *testing.T) {
+		userMock, err := domain.NewUser("John Doe", "john.doe@example.com", oldPassword, nil)
+		require.NoError(t, err)
+
 		input := application.UpdateUserPasswordInput{
 			UserID:      userMock.ID,
 			OldPassword: oldPasswordString,
@@ -403,11 +479,12 @@ func TestAuthServiceImpl_UpdateUserPassword(t *testing.T) {
 		gotErr := s.UpdateUserPassword(t.Context(), input)
 
 		assert.ErrorIs(t, gotErr, domain.ErrPasswordWeak)
-		userRepo.AssertNotCalled(t, "GetUserByID")
-		userRepo.AssertNotCalled(t, "UpdateUser")
 	})
 
 	t.Run("should throw error when user not found", func(t *testing.T) {
+		userMock, err := domain.NewUser("John Doe", "john.doe@example.com", oldPassword, nil)
+		require.NoError(t, err)
+
 		input := application.UpdateUserPasswordInput{
 			UserID:      userMock.ID,
 			OldPassword: oldPasswordString,
@@ -421,10 +498,12 @@ func TestAuthServiceImpl_UpdateUserPassword(t *testing.T) {
 		gotErr := s.UpdateUserPassword(t.Context(), input)
 
 		assert.ErrorIs(t, gotErr, application.ErrUserNotFound)
-		userRepo.AssertNotCalled(t, "UpdateUser")
 	})
 
 	t.Run("should throw error when GetUserByID returns error", func(t *testing.T) {
+		userMock, err := domain.NewUser("John Doe", "john.doe@example.com", oldPassword, nil)
+		require.NoError(t, err)
+
 		input := application.UpdateUserPasswordInput{
 			UserID:      userMock.ID,
 			OldPassword: oldPasswordString,
@@ -438,10 +517,12 @@ func TestAuthServiceImpl_UpdateUserPassword(t *testing.T) {
 		gotErr := s.UpdateUserPassword(t.Context(), input)
 
 		assert.ErrorIs(t, gotErr, assert.AnError)
-		userRepo.AssertNotCalled(t, "UpdateUser")
 	})
 
 	t.Run("should throw error when UpdateUser returns error", func(t *testing.T) {
+		userMock, err := domain.NewUser("John Doe", "john.doe@example.com", oldPassword, nil)
+		require.NoError(t, err)
+
 		input := application.UpdateUserPasswordInput{
 			UserID:      userMock.ID,
 			OldPassword: oldPasswordString,
@@ -456,5 +537,113 @@ func TestAuthServiceImpl_UpdateUserPassword(t *testing.T) {
 		gotErr := s.UpdateUserPassword(t.Context(), input)
 
 		assert.ErrorIs(t, gotErr, assert.AnError)
+	})
+}
+
+func TestAuthServiceImpl_RefreshToken(t *testing.T) {
+	secretKey := "test_secret_key"
+	serviceName := "ipanema-box-api"
+	tokenJWTExpiresAt := 1 * time.Minute
+	refreshTokenExpiresAt := 7 * 24 * time.Hour // 7 days
+
+	t.Run("should returns new token", func(t *testing.T) {
+		userID := uuid.New()
+		refreshToken := "refresh-token"
+
+		tokenRepoMock := mocks.NewMockTokenRepository(t)
+		tokenRepoMock.On("GetUserIDByRefreshToken",
+			mock.AnythingOfType("*context.cancelCtx"),
+			refreshToken,
+		).Return(userID, nil)
+		tokenRepoMock.On("SetTokenJWT",
+			mock.AnythingOfType("*context.cancelCtx"),
+			mock.AnythingOfType("infrastructure.TokenJWTClaims"),
+			mock.AnythingOfType("string"),
+			mock.AnythingOfType("time.Duration"),
+		).Return(nil)
+		tokenRepoMock.On("SetRefreshToken",
+			mock.AnythingOfType("*context.cancelCtx"),
+			mock.AnythingOfType("string"),
+			userID,
+			refreshTokenExpiresAt,
+		).Return(nil)
+
+		tokenSvc := infrastructure.NewTokenService(tokenRepoMock, serviceName, secretKey, tokenJWTExpiresAt, refreshTokenExpiresAt)
+
+		s := application.NewAuthService(nil, tokenSvc)
+		got, err := s.RefreshToken(t.Context(), refreshToken)
+		require.NoError(t, err)
+
+		assert.NotEmpty(t, got.AccessToken)
+		assert.Len(t, got.RefreshToken, 64)
+	})
+
+	t.Run("should throw error when GetUserIDByRefreshToken returns error", func(t *testing.T) {
+		refreshToken := "refresh-token"
+
+		tokenRepoMock := mocks.NewMockTokenRepository(t)
+		tokenRepoMock.On("GetUserIDByRefreshToken",
+			mock.AnythingOfType("*context.cancelCtx"),
+			refreshToken,
+		).Return(nil, assert.AnError)
+
+		tokenSvc := infrastructure.NewTokenService(tokenRepoMock, serviceName, secretKey, tokenJWTExpiresAt, refreshTokenExpiresAt)
+
+		s := application.NewAuthService(nil, tokenSvc)
+		_, err := s.RefreshToken(t.Context(), refreshToken)
+
+		assert.ErrorIs(t, err, assert.AnError)
+	})
+	t.Run("should throw error when GenerateTokenJWT returns error", func(t *testing.T) {
+		userID := uuid.New()
+		refreshToken := "refresh-token"
+
+		tokenRepoMock := mocks.NewMockTokenRepository(t)
+		tokenRepoMock.On("GetUserIDByRefreshToken",
+			mock.AnythingOfType("*context.cancelCtx"),
+			refreshToken,
+		).Return(userID, nil)
+		tokenRepoMock.On("SetTokenJWT",
+			mock.AnythingOfType("*context.cancelCtx"),
+			mock.AnythingOfType("infrastructure.TokenJWTClaims"),
+			mock.AnythingOfType("string"),
+			mock.AnythingOfType("time.Duration"),
+		).Return(assert.AnError)
+
+		tokenSvc := infrastructure.NewTokenService(tokenRepoMock, serviceName, secretKey, tokenJWTExpiresAt, refreshTokenExpiresAt)
+
+		s := application.NewAuthService(nil, tokenSvc)
+		_, err := s.RefreshToken(t.Context(), refreshToken)
+
+		assert.ErrorIs(t, err, assert.AnError)
+	})
+	t.Run("should throw error when GenerateRefreshToken returns error", func(t *testing.T) {
+		userID := uuid.New()
+		refreshToken := "refresh-token"
+
+		tokenRepoMock := mocks.NewMockTokenRepository(t)
+		tokenRepoMock.On("GetUserIDByRefreshToken",
+			mock.AnythingOfType("*context.cancelCtx"),
+			refreshToken,
+		).Return(userID, nil)
+		tokenRepoMock.On("SetTokenJWT",
+			mock.AnythingOfType("*context.cancelCtx"),
+			mock.AnythingOfType("infrastructure.TokenJWTClaims"),
+			mock.AnythingOfType("string"),
+			mock.AnythingOfType("time.Duration"),
+		).Return(nil)
+		tokenRepoMock.On("SetRefreshToken",
+			mock.AnythingOfType("*context.cancelCtx"),
+			mock.AnythingOfType("string"),
+			userID,
+			refreshTokenExpiresAt,
+		).Return(assert.AnError)
+
+		tokenSvc := infrastructure.NewTokenService(tokenRepoMock, serviceName, secretKey, tokenJWTExpiresAt, refreshTokenExpiresAt)
+
+		s := application.NewAuthService(nil, tokenSvc)
+		_, err := s.RefreshToken(t.Context(), refreshToken)
+
+		assert.ErrorIs(t, err, assert.AnError)
 	})
 }

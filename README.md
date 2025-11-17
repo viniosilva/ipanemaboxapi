@@ -38,13 +38,4 @@ make test
 
 ## Next steps
 
-Missing tests:
-1. Application Layer (internal/auth/application/)
-    - TestAuthServiceImpl_RefreshToken
-2. Presentation Layer (internal/auth/presentation/)
-    - TestAuthHandler_Logout
-    - TestAuthHandler_RefreshToken
-3. Middleware (internal/shared/presentation/middleware/)
-    - auth_test.go
-    - error_handler_test.go
-4. E2E tests
+- E2E tests

@@ -99,7 +99,7 @@ const docTemplate = `{
         },
         "/auth/refresh": {
             "post": {
-                "description": "Refresh access token using refresh token",
+                "description": "Refresh access token using refresh token\n*Errors:*\n- invalidToken",
                 "consumes": [
                     "application/json"
                 ],

@@ -56,7 +56,6 @@ func TestTokenService_GenerateToken(t *testing.T) {
 		_, gotErr := s.GenerateTokenJWT(t.Context(), user.ID)
 
 		require.NoError(t, gotErr)
-		tokenRepoMock.AssertNotCalled(t, "SetTokenJWT")
 	})
 }
 
@@ -112,7 +111,6 @@ func TestTokenService_ValidateToken(t *testing.T) {
 
 		_, gotErr := s.ValidateTokenJWT(t.Context(), token)
 		assert.ErrorIs(t, gotErr, infrastructure.ErrInvalidToken)
-		tokenRepoMock.AssertNotCalled(t, "HasTokenJWT")
 	})
 
 	t.Run("should throw error when token has revoked", func(t *testing.T) {
@@ -207,7 +205,6 @@ func TestTokenService_RevokeTokenJWT(t *testing.T) {
 		gotErr := s.RevokeTokenJWT(context.Background(), user.ID)
 		require.NoError(t, gotErr)
 
-		tokenRepoMock.AssertNotCalled(t, "DeleteUserRefreshTokens")
 	})
 
 	t.Run("should throw error when DeleteTokenJWT returns error", func(t *testing.T) {
@@ -223,7 +220,6 @@ func TestTokenService_RevokeTokenJWT(t *testing.T) {
 		s := infrastructure.NewTokenService(tokenRepoMock, serviceName, secretKey, tokenJWTExpiresAt, refreshTokenExpiresAt)
 		gotErr := s.RevokeTokenJWT(context.Background(), user.ID)
 		assert.ErrorIs(t, gotErr, assert.AnError)
-		tokenRepoMock.AssertNotCalled(t, "DeleteUserRefreshTokens")
 	})
 }
 

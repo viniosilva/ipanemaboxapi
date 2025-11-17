@@ -162,7 +162,10 @@ paths:
     post:
       consumes:
       - application/json
-      description: Refresh access token using refresh token
+      description: |-
+        Refresh access token using refresh token
+        *Errors:*
+        - invalidToken
       parameters:
       - description: Refresh token
         in: body
