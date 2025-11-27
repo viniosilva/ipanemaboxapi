@@ -7,6 +7,7 @@ API for managing service and installation schedules, developed to organize appoi
 - GNU Make
 - Docker
 - Docker compose
+- ApiDog (for e2e tests)
 
 ## Setup
 1. Install dependencies:
@@ -33,9 +34,13 @@ make dev
 make test
 ```
 
+### E2E tests
+- Import to ApiDog `docs/Ipanema Box.apidog.json`
+- Start project locally
+- Run scenario tests on ApiDog
+
 ## Monitoring
 - **Health Check**: `GET /health`
 
 ## Next steps
-
-- E2E tests
+- Set up an isolated test database environment with setup and teardown commands

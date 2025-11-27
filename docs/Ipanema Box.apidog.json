@@ -1,0 +1,1982 @@
+{
+  "apidogProject": "1.0.0",
+  "$schema": {
+    "app": "apidog",
+    "type": "project",
+    "version": "1.2.0"
+  },
+  "info": {
+    "name": "Ipanema Box",
+    "description": "",
+    "mockRule": {
+      "rules": [],
+      "enableSystemRule": true
+    }
+  },
+  "apiCollection": [
+    {
+      "name": "Root",
+      "id": 5706637,
+      "auth": {},
+      "securityScheme": {},
+      "parentId": 0,
+      "serverId": "",
+      "description": "",
+      "identityPattern": {
+        "httpApi": {
+          "type": "methodAndPath",
+          "bodyType": "",
+          "fields": []
+        }
+      },
+      "shareSettings": {},
+      "visibility": "SHARED",
+      "moduleId": 983654,
+      "preProcessors": [
+        {
+          "id": "inheritProcessors",
+          "type": "inheritProcessors",
+          "data": {}
+        }
+      ],
+      "postProcessors": [
+        {
+          "id": "inheritProcessors",
+          "type": "inheritProcessors",
+          "data": {}
+        }
+      ],
+      "inheritPostProcessors": {},
+      "inheritPreProcessors": {},
+      "items": [
+        {
+          "name": "auth",
+          "id": 5706639,
+          "auth": {
+            "type": "bearer",
+            "bearer": {
+              "token": "{{jwt_token}}"
+            }
+          },
+          "securityScheme": {},
+          "parentId": 0,
+          "serverId": "",
+          "description": "",
+          "identityPattern": {
+            "httpApi": {
+              "type": "inherit",
+              "bodyType": ""
+            }
+          },
+          "shareSettings": {},
+          "visibility": "INHERITED",
+          "moduleId": 983654,
+          "preProcessors": [
+            {
+              "id": "inheritProcessors",
+              "type": "inheritProcessors",
+              "data": {}
+            }
+          ],
+          "postProcessors": [
+            {
+              "id": "inheritProcessors",
+              "type": "inheritProcessors",
+              "data": {}
+            }
+          ],
+          "inheritPostProcessors": {},
+          "inheritPreProcessors": {},
+          "items": [
+            {
+              "name": "Login a user",
+              "api": {
+                "id": "24665500",
+                "method": "post",
+                "path": "/auth/login",
+                "parameters": {
+                  "path": [],
+                  "query": [],
+                  "cookie": [],
+                  "header": []
+                },
+                "auth": {},
+                "securityScheme": {},
+                "commonParameters": {},
+                "responses": [
+                  {
+                    "id": "186939687",
+                    "code": 200,
+                    "name": "OK",
+                    "headers": [],
+                    "jsonSchema": {
+                      "$ref": "#/definitions/11178182"
+                    },
+                    "description": "OK",
+                    "contentType": "json",
+                    "mediaType": "application/json",
+                    "oasExtensions": ""
+                  },
+                  {
+                    "id": "122214481",
+                    "code": 422,
+                    "name": "Unprocessable Entity",
+                    "headers": [],
+                    "jsonSchema": {
+                      "$ref": "#/definitions/11178179"
+                    },
+                    "description": "Unprocessable Entity",
+                    "contentType": "json",
+                    "mediaType": "application/json",
+                    "oasExtensions": ""
+                  },
+                  {
+                    "id": "125082762",
+                    "code": 500,
+                    "name": "Internal Server Error",
+                    "headers": [],
+                    "jsonSchema": {
+                      "$ref": "#/definitions/11178178"
+                    },
+                    "description": "Internal Server Error",
+                    "contentType": "json",
+                    "mediaType": "application/json",
+                    "oasExtensions": ""
+                  }
+                ],
+                "responseExamples": [],
+                "requestBody": {
+                  "type": "application/json",
+                  "parameters": [],
+                  "jsonSchema": {
+                    "$ref": "#/definitions/11178181"
+                  },
+                  "mediaType": "application/json",
+                  "oasExtensions": "",
+                  "required": true,
+                  "additionalContentTypes": []
+                },
+                "description": "*Validation errors:*\n- email: emailEmpty, emailInvalid\n- password: passwordEmpty, userNotFound",
+                "tags": [
+                  "auth"
+                ],
+                "status": "released",
+                "serverId": "",
+                "operationId": "",
+                "sourceUrl": "",
+                "ordering": 6,
+                "cases": [
+                  {
+                    "id": 34067809,
+                    "type": "DEBUG_CASE",
+                    "path": null,
+                    "name": "Success",
+                    "responseId": "186939687",
+                    "parameters": {
+                      "path": [],
+                      "query": [],
+                      "cookie": [],
+                      "header": []
+                    },
+                    "commonParameters": {},
+                    "requestBody": {
+                      "parameters": [],
+                      "data": "",
+                      "type": "application/json",
+                      "generateMode": "normal"
+                    },
+                    "auth": {},
+                    "securityScheme": {},
+                    "advancedSettings": {
+                      "disabledSystemHeaders": {}
+                    },
+                    "requestResult": null,
+                    "visibility": "INHERITED",
+                    "moduleId": 983654,
+                    "categoryId": 0,
+                    "tagIds": [],
+                    "preProcessors": [],
+                    "postProcessors": [],
+                    "inheritPostProcessors": {},
+                    "inheritPreProcessors": {}
+                  }
+                ],
+                "mocks": [],
+                "customApiFields": "{}",
+                "advancedSettings": {
+                  "disabledSystemHeaders": {}
+                },
+                "mockScript": {},
+                "codeSamples": [],
+                "commonResponseStatus": {},
+                "responseChildren": [],
+                "visibility": "INHERITED",
+                "moduleId": 983654,
+                "oasExtensions": "",
+                "type": "http",
+                "preProcessors": [],
+                "postProcessors": [],
+                "inheritPostProcessors": {},
+                "inheritPreProcessors": {}
+              }
+            },
+            {
+              "name": "Logout a user",
+              "api": {
+                "id": "24665501",
+                "method": "delete",
+                "path": "/auth/logout",
+                "parameters": {
+                  "path": [],
+                  "query": [],
+                  "cookie": [],
+                  "header": []
+                },
+                "auth": {
+                  "type": "securityscheme"
+                },
+                "securityScheme": {
+                  "schemeGroups": [
+                    {
+                      "id": "he13zOlDjfbIAAAOF0kMo",
+                      "schemeIds": [
+                        431668
+                      ]
+                    }
+                  ],
+                  "required": true,
+                  "use": {
+                    "id": "he13zOlDjfbIAAAOF0kMo",
+                    "configs": {
+                      "431668": {
+                        "authConfigs": {
+                          "x-apidog": {
+                            "value": "{{apiKey}}"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "scopes": {
+                    "he13zOlDjfbIAAAOF0kMo": {
+                      "431668": []
+                    }
+                  }
+                },
+                "commonParameters": {},
+                "responses": [
+                  {
+                    "id": "112398927",
+                    "code": 204,
+                    "name": "No Content",
+                    "headers": [],
+                    "jsonSchema": {
+                      "type": "object",
+                      "properties": {}
+                    },
+                    "description": "No Content",
+                    "contentType": "noContent",
+                    "oasExtensions": ""
+                  },
+                  {
+                    "id": "100350944",
+                    "code": 401,
+                    "name": "Unauthorized",
+                    "headers": [],
+                    "jsonSchema": {
+                      "$ref": "#/definitions/11178178"
+                    },
+                    "description": "Unauthorized",
+                    "contentType": "json",
+                    "mediaType": "application/json",
+                    "oasExtensions": ""
+                  },
+                  {
+                    "id": "164031109",
+                    "code": 500,
+                    "name": "Internal Server Error",
+                    "headers": [],
+                    "jsonSchema": {
+                      "$ref": "#/definitions/11178178"
+                    },
+                    "description": "Internal Server Error",
+                    "contentType": "json",
+                    "mediaType": "application/json",
+                    "oasExtensions": ""
+                  }
+                ],
+                "responseExamples": [],
+                "requestBody": {
+                  "type": "none",
+                  "parameters": [],
+                  "required": false,
+                  "additionalContentTypes": [],
+                  "oasExtensions": ""
+                },
+                "description": "",
+                "tags": [
+                  "auth"
+                ],
+                "status": "released",
+                "serverId": "",
+                "operationId": "",
+                "sourceUrl": "",
+                "ordering": 12,
+                "cases": [
+                  {
+                    "id": 34067810,
+                    "type": "DEBUG_CASE",
+                    "path": null,
+                    "name": "Success",
+                    "responseId": "112398927",
+                    "parameters": {
+                      "path": [],
+                      "query": [],
+                      "cookie": [],
+                      "header": []
+                    },
+                    "commonParameters": {},
+                    "requestBody": {
+                      "parameters": [],
+                      "type": "none",
+                      "generateMode": "normal"
+                    },
+                    "auth": {},
+                    "securityScheme": {},
+                    "advancedSettings": {
+                      "disabledSystemHeaders": {}
+                    },
+                    "requestResult": null,
+                    "visibility": "INHERITED",
+                    "moduleId": 983654,
+                    "categoryId": 0,
+                    "tagIds": [],
+                    "preProcessors": [],
+                    "postProcessors": [],
+                    "inheritPostProcessors": {},
+                    "inheritPreProcessors": {}
+                  }
+                ],
+                "mocks": [],
+                "customApiFields": "{}",
+                "advancedSettings": {
+                  "disabledSystemHeaders": {}
+                },
+                "mockScript": {},
+                "codeSamples": [],
+                "commonResponseStatus": {},
+                "responseChildren": [],
+                "visibility": "INHERITED",
+                "moduleId": 983654,
+                "oasExtensions": "",
+                "type": "http",
+                "preProcessors": [],
+                "postProcessors": [],
+                "inheritPostProcessors": {},
+                "inheritPreProcessors": {}
+              }
+            },
+            {
+              "name": "Refresh access token",
+              "api": {
+                "id": "24665502",
+                "method": "post",
+                "path": "/auth/refresh",
+                "parameters": {
+                  "path": [],
+                  "query": [],
+                  "cookie": [],
+                  "header": []
+                },
+                "auth": {},
+                "securityScheme": {},
+                "commonParameters": {},
+                "responses": [
+                  {
+                    "id": "141188845",
+                    "code": 200,
+                    "name": "OK",
+                    "headers": [],
+                    "jsonSchema": {
+                      "$ref": "#/definitions/11178184"
+                    },
+                    "description": "OK",
+                    "contentType": "json",
+                    "mediaType": "application/json",
+                    "oasExtensions": ""
+                  },
+                  {
+                    "id": "169608372",
+                    "code": 401,
+                    "name": "Unauthorized",
+                    "headers": [],
+                    "jsonSchema": {
+                      "$ref": "#/definitions/11178178"
+                    },
+                    "description": "Unauthorized",
+                    "contentType": "json",
+                    "mediaType": "application/json",
+                    "oasExtensions": ""
+                  },
+                  {
+                    "id": "128887231",
+                    "code": 500,
+                    "name": "Internal Server Error",
+                    "headers": [],
+                    "jsonSchema": {
+                      "$ref": "#/definitions/11178178"
+                    },
+                    "description": "Internal Server Error",
+                    "contentType": "json",
+                    "mediaType": "application/json",
+                    "oasExtensions": ""
+                  }
+                ],
+                "responseExamples": [],
+                "requestBody": {
+                  "type": "application/json",
+                  "parameters": [],
+                  "jsonSchema": {
+                    "$ref": "#/definitions/11178183"
+                  },
+                  "mediaType": "application/json",
+                  "oasExtensions": "",
+                  "required": true,
+                  "additionalContentTypes": []
+                },
+                "description": "Refresh access token using refresh token\n*Errors:*\n- invalidToken",
+                "tags": [
+                  "auth"
+                ],
+                "status": "released",
+                "serverId": "",
+                "operationId": "",
+                "sourceUrl": "",
+                "ordering": 18,
+                "cases": [
+                  {
+                    "id": 34067811,
+                    "type": "DEBUG_CASE",
+                    "path": null,
+                    "name": "Success",
+                    "responseId": "141188845",
+                    "parameters": {
+                      "path": [],
+                      "query": [],
+                      "cookie": [],
+                      "header": []
+                    },
+                    "commonParameters": {},
+                    "requestBody": {
+                      "parameters": [],
+                      "data": "",
+                      "type": "application/json",
+                      "generateMode": "normal"
+                    },
+                    "auth": {},
+                    "securityScheme": {},
+                    "advancedSettings": {
+                      "disabledSystemHeaders": {}
+                    },
+                    "requestResult": null,
+                    "visibility": "INHERITED",
+                    "moduleId": 983654,
+                    "categoryId": 0,
+                    "tagIds": [],
+                    "preProcessors": [],
+                    "postProcessors": [],
+                    "inheritPostProcessors": {},
+                    "inheritPreProcessors": {}
+                  }
+                ],
+                "mocks": [],
+                "customApiFields": "{}",
+                "advancedSettings": {
+                  "disabledSystemHeaders": {}
+                },
+                "mockScript": {},
+                "codeSamples": [],
+                "commonResponseStatus": {},
+                "responseChildren": [],
+                "visibility": "INHERITED",
+                "moduleId": 983654,
+                "oasExtensions": "",
+                "type": "http",
+                "preProcessors": [],
+                "postProcessors": [],
+                "inheritPostProcessors": {},
+                "inheritPreProcessors": {}
+              }
+            },
+            {
+              "name": "Register a new user",
+              "api": {
+                "id": "24665503",
+                "method": "post",
+                "path": "/auth/register",
+                "parameters": {
+                  "query": [],
+                  "path": [],
+                  "cookie": [],
+                  "header": []
+                },
+                "auth": {},
+                "securityScheme": {},
+                "commonParameters": {
+                  "query": [],
+                  "body": [],
+                  "cookie": [],
+                  "header": []
+                },
+                "responses": [
+                  {
+                    "id": "190520347",
+                    "code": 201,
+                    "name": "Created",
+                    "headers": [],
+                    "jsonSchema": {
+                      "$ref": "#/definitions/11178186"
+                    },
+                    "description": "Created",
+                    "contentType": "json",
+                    "mediaType": "application/json",
+                    "oasExtensions": ""
+                  },
+                  {
+                    "id": "187514725",
+                    "code": 422,
+                    "name": "Unprocessable Entity",
+                    "headers": [],
+                    "jsonSchema": {
+                      "$ref": "#/definitions/11178179"
+                    },
+                    "description": "Unprocessable Entity",
+                    "contentType": "json",
+                    "mediaType": "application/json",
+                    "oasExtensions": ""
+                  },
+                  {
+                    "id": "118691136",
+                    "code": 500,
+                    "name": "Internal Server Error",
+                    "headers": [],
+                    "jsonSchema": {
+                      "$ref": "#/definitions/11178178"
+                    },
+                    "description": "Internal Server Error",
+                    "contentType": "json",
+                    "mediaType": "application/json",
+                    "oasExtensions": ""
+                  }
+                ],
+                "responseExamples": [],
+                "requestBody": {
+                  "type": "application/json",
+                  "parameters": [],
+                  "jsonSchema": {
+                    "$ref": "#/definitions/11178185"
+                  },
+                  "required": true,
+                  "mediaType": "application/json",
+                  "examples": [
+                    {
+                      "mediaType": "application/json",
+                      "value": "{\n    \"email\": \"john.doe@example.com\",\n    \"name\": \"John Doe\",\n    \"password\": \"abcd1234!\",\n    \"phone\": \"+5511999999999\"\n}"
+                    }
+                  ],
+                  "oasExtensions": ""
+                },
+                "description": "*Validation errors:*\n- name: userNameEmpty\n- email: emailEmpty, emailInvalid, userAlreadyExists\n- password: passwordEmpty, passwordTooLong, passwordWeak\n- phone: phoneEmpty, phoneInvalid",
+                "tags": [
+                  "auth"
+                ],
+                "status": "released",
+                "serverId": "",
+                "operationId": "",
+                "sourceUrl": "",
+                "ordering": 24,
+                "cases": [
+                  {
+                    "id": 34067812,
+                    "type": "DEBUG_CASE",
+                    "path": null,
+                    "name": "Success",
+                    "responseId": "190520347",
+                    "parameters": {
+                      "path": [],
+                      "query": [],
+                      "cookie": [],
+                      "header": []
+                    },
+                    "commonParameters": {},
+                    "requestBody": {
+                      "parameters": [],
+                      "data": "",
+                      "type": "application/json",
+                      "generateMode": "normal"
+                    },
+                    "auth": {},
+                    "securityScheme": {},
+                    "advancedSettings": {
+                      "disabledSystemHeaders": {}
+                    },
+                    "requestResult": null,
+                    "visibility": "INHERITED",
+                    "moduleId": 983654,
+                    "categoryId": 0,
+                    "tagIds": [],
+                    "preProcessors": [],
+                    "postProcessors": [],
+                    "inheritPostProcessors": {},
+                    "inheritPreProcessors": {}
+                  }
+                ],
+                "mocks": [],
+                "customApiFields": "{}",
+                "advancedSettings": {
+                  "disabledSystemHeaders": {}
+                },
+                "mockScript": {},
+                "codeSamples": [],
+                "commonResponseStatus": {},
+                "responseChildren": [],
+                "visibility": "INHERITED",
+                "moduleId": 983654,
+                "oasExtensions": "",
+                "type": "http",
+                "preProcessors": [],
+                "postProcessors": [],
+                "inheritPostProcessors": {},
+                "inheritPreProcessors": {}
+              }
+            },
+            {
+              "name": "Update user password",
+              "api": {
+                "id": "24665504",
+                "method": "put",
+                "path": "/auth/update-password",
+                "parameters": {
+                  "path": [],
+                  "query": [],
+                  "cookie": [],
+                  "header": []
+                },
+                "auth": {
+                  "type": "securityscheme"
+                },
+                "securityScheme": {
+                  "schemeGroups": [
+                    {
+                      "id": "5nZiJ5dm8NiOdkgfYVqGR",
+                      "schemeIds": [
+                        431668
+                      ]
+                    }
+                  ],
+                  "required": true,
+                  "use": {
+                    "id": "5nZiJ5dm8NiOdkgfYVqGR",
+                    "configs": {
+                      "431668": {
+                        "authConfigs": {
+                          "x-apidog": {
+                            "value": "{{apiKey}}"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "scopes": {
+                    "5nZiJ5dm8NiOdkgfYVqGR": {
+                      "431668": []
+                    }
+                  }
+                },
+                "commonParameters": {},
+                "responses": [
+                  {
+                    "id": "165285079",
+                    "code": 204,
+                    "name": "No Content",
+                    "headers": [],
+                    "jsonSchema": {
+                      "type": "object",
+                      "properties": {}
+                    },
+                    "description": "No Content",
+                    "contentType": "noContent",
+                    "oasExtensions": ""
+                  },
+                  {
+                    "id": "164398505",
+                    "code": 401,
+                    "name": "Unauthorized",
+                    "headers": [],
+                    "jsonSchema": {
+                      "$ref": "#/definitions/11178178"
+                    },
+                    "description": "Unauthorized",
+                    "contentType": "json",
+                    "mediaType": "application/json",
+                    "oasExtensions": ""
+                  },
+                  {
+                    "id": "157558722",
+                    "code": 403,
+                    "name": "Forbidden",
+                    "headers": [],
+                    "jsonSchema": {
+                      "$ref": "#/definitions/11178178"
+                    },
+                    "description": "Forbidden",
+                    "contentType": "json",
+                    "mediaType": "application/json",
+                    "oasExtensions": ""
+                  },
+                  {
+                    "id": "106653334",
+                    "code": 422,
+                    "name": "Unprocessable Entity",
+                    "headers": [],
+                    "jsonSchema": {
+                      "$ref": "#/definitions/11178179"
+                    },
+                    "description": "Unprocessable Entity",
+                    "contentType": "json",
+                    "mediaType": "application/json",
+                    "oasExtensions": ""
+                  },
+                  {
+                    "id": "166385390",
+                    "code": 500,
+                    "name": "Internal Server Error",
+                    "headers": [],
+                    "jsonSchema": {
+                      "$ref": "#/definitions/11178178"
+                    },
+                    "description": "Internal Server Error",
+                    "contentType": "json",
+                    "mediaType": "application/json",
+                    "oasExtensions": ""
+                  }
+                ],
+                "responseExamples": [],
+                "requestBody": {
+                  "type": "application/json",
+                  "parameters": [],
+                  "jsonSchema": {
+                    "$ref": "#/definitions/11178187"
+                  },
+                  "mediaType": "application/json",
+                  "oasExtensions": "",
+                  "required": true,
+                  "additionalContentTypes": []
+                },
+                "description": "*Validation errors:*\n- old_password: passwordEmpty, invalidPassword\n- new_password: passwordEmpty, passwordTooLong, passwordWeak",
+                "tags": [
+                  "auth"
+                ],
+                "status": "released",
+                "serverId": "",
+                "operationId": "",
+                "sourceUrl": "",
+                "ordering": 30,
+                "cases": [
+                  {
+                    "id": 34067813,
+                    "type": "DEBUG_CASE",
+                    "path": null,
+                    "name": "Success",
+                    "responseId": "165285079",
+                    "parameters": {
+                      "path": [],
+                      "query": [],
+                      "cookie": [],
+                      "header": []
+                    },
+                    "commonParameters": {},
+                    "requestBody": {
+                      "parameters": [],
+                      "data": "",
+                      "type": "application/json",
+                      "generateMode": "normal"
+                    },
+                    "auth": {},
+                    "securityScheme": {},
+                    "advancedSettings": {
+                      "disabledSystemHeaders": {}
+                    },
+                    "requestResult": null,
+                    "visibility": "INHERITED",
+                    "moduleId": 983654,
+                    "categoryId": 0,
+                    "tagIds": [],
+                    "preProcessors": [],
+                    "postProcessors": [],
+                    "inheritPostProcessors": {},
+                    "inheritPreProcessors": {}
+                  }
+                ],
+                "mocks": [],
+                "customApiFields": "{}",
+                "advancedSettings": {
+                  "disabledSystemHeaders": {}
+                },
+                "mockScript": {},
+                "codeSamples": [],
+                "commonResponseStatus": {},
+                "responseChildren": [],
+                "visibility": "INHERITED",
+                "moduleId": 983654,
+                "oasExtensions": "",
+                "type": "http",
+                "preProcessors": [],
+                "postProcessors": [],
+                "inheritPostProcessors": {},
+                "inheritPreProcessors": {}
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "socketCollection": [],
+  "docCollection": [],
+  "webSocketCollection": [],
+  "socketIOCollection": [],
+  "responseCollection": [
+    {
+      "_databaseId": 1224428,
+      "updatedAt": "2025-11-25T01:14:08.000Z",
+      "name": "Root",
+      "type": "root",
+      "children": [],
+      "moduleId": 983654,
+      "parentId": 0,
+      "id": 1224428,
+      "ordering": [],
+      "items": []
+    }
+  ],
+  "schemaCollection": [
+    {
+      "id": 2799794,
+      "name": "Root",
+      "visibility": "SHARED",
+      "moduleId": 983654,
+      "items": [
+        {
+          "name": "middleware.ServerErrorResponse",
+          "displayName": "",
+          "id": "#/definitions/11178178",
+          "description": "",
+          "schema": {
+            "jsonSchema": {
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "examples": [
+                    "an unexpected error occurred"
+                  ]
+                }
+              },
+              "type": "object",
+              "x-apidog-orders": [
+                "message"
+              ]
+            }
+          },
+          "visibility": "INHERITED",
+          "moduleId": 983654
+        },
+        {
+          "name": "pkg.ValidationError",
+          "displayName": "",
+          "id": "#/definitions/11178179",
+          "description": "",
+          "schema": {
+            "jsonSchema": {
+              "properties": {
+                "error": {
+                  "$ref": "#/definitions/11178180"
+                },
+                "message": {
+                  "type": "string",
+                  "examples": [
+                    "validation error"
+                  ]
+                }
+              },
+              "type": "object",
+              "x-apidog-orders": [
+                "error",
+                "message"
+              ]
+            }
+          },
+          "visibility": "INHERITED",
+          "moduleId": 983654
+        },
+        {
+          "name": "pkg.ValidationErrorDetails",
+          "displayName": "",
+          "id": "#/definitions/11178180",
+          "description": "",
+          "schema": {
+            "jsonSchema": {
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "examples": [
+                    "email"
+                  ]
+                },
+                "message": {
+                  "type": "string",
+                  "examples": [
+                    "email is required"
+                  ]
+                },
+                "tag": {
+                  "type": "string",
+                  "examples": [
+                    "emailEmpty"
+                  ]
+                }
+              },
+              "type": "object",
+              "x-apidog-orders": [
+                "field",
+                "message",
+                "tag"
+              ]
+            }
+          },
+          "visibility": "INHERITED",
+          "moduleId": 983654
+        },
+        {
+          "name": "presentation.LoginRequest",
+          "displayName": "",
+          "id": "#/definitions/11178181",
+          "description": "",
+          "schema": {
+            "jsonSchema": {
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "examples": [
+                    "john.doe@example.com"
+                  ]
+                },
+                "password": {
+                  "type": "string",
+                  "examples": [
+                    "abcd1234!"
+                  ]
+                }
+              },
+              "type": "object",
+              "x-apidog-orders": [
+                "email",
+                "password"
+              ]
+            }
+          },
+          "visibility": "INHERITED",
+          "moduleId": 983654
+        },
+        {
+          "name": "presentation.LoginResponse",
+          "displayName": "",
+          "id": "#/definitions/11178182",
+          "description": "",
+          "schema": {
+            "jsonSchema": {
+              "properties": {
+                "access_token": {
+                  "type": "string",
+                  "examples": [
+                    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTY4MTIwMDB9.9PqE5VHqD7kz1jZlCwVjMZHhY0K8Jb5YQbHJ5yQ5Q"
+                  ]
+                },
+                "refresh_token": {
+                  "type": "string",
+                  "examples": [
+                    "123e4567e89b12d3a456426614174000"
+                  ]
+                }
+              },
+              "type": "object",
+              "x-apidog-orders": [
+                "access_token",
+                "refresh_token"
+              ]
+            }
+          },
+          "visibility": "INHERITED",
+          "moduleId": 983654
+        },
+        {
+          "name": "presentation.RefreshTokenRequest",
+          "displayName": "",
+          "id": "#/definitions/11178183",
+          "description": "",
+          "schema": {
+            "jsonSchema": {
+              "properties": {
+                "refresh_token": {
+                  "type": "string",
+                  "examples": [
+                    "123e4567e89b12d3a456426614174000"
+                  ]
+                }
+              },
+              "type": "object",
+              "x-apidog-orders": [
+                "refresh_token"
+              ]
+            }
+          },
+          "visibility": "INHERITED",
+          "moduleId": 983654
+        },
+        {
+          "name": "presentation.RefreshTokenResponse",
+          "displayName": "",
+          "id": "#/definitions/11178184",
+          "description": "",
+          "schema": {
+            "jsonSchema": {
+              "properties": {
+                "access_token": {
+                  "type": "string",
+                  "examples": [
+                    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTY4MTIwMDB9.9PqE5VHqD7kz1jZlCwVjMZHhY0K8Jb5YQbHJ5yQ5Q"
+                  ]
+                },
+                "refresh_token": {
+                  "type": "string",
+                  "examples": [
+                    "123e4567e89b12d3a456426614174000"
+                  ]
+                }
+              },
+              "type": "object",
+              "x-apidog-orders": [
+                "access_token",
+                "refresh_token"
+              ]
+            }
+          },
+          "visibility": "INHERITED",
+          "moduleId": 983654
+        },
+        {
+          "name": "presentation.RegisterRequest",
+          "displayName": "",
+          "id": "#/definitions/11178185",
+          "description": "",
+          "schema": {
+            "jsonSchema": {
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "examples": [
+                    "john.doe@example.com"
+                  ]
+                },
+                "name": {
+                  "type": "string",
+                  "examples": [
+                    "John Doe"
+                  ]
+                },
+                "password": {
+                  "type": "string",
+                  "examples": [
+                    "abcd1234!"
+                  ]
+                },
+                "phone": {
+                  "type": "string",
+                  "examples": [
+                    "+5511999999999"
+                  ]
+                }
+              },
+              "type": "object",
+              "x-apidog-orders": [
+                "email",
+                "name",
+                "password",
+                "phone"
+              ]
+            }
+          },
+          "visibility": "INHERITED",
+          "moduleId": 983654
+        },
+        {
+          "name": "presentation.RegisterResponse",
+          "displayName": "",
+          "id": "#/definitions/11178186",
+          "description": "",
+          "schema": {
+            "jsonSchema": {
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "examples": [
+                    "john.doe@example.com"
+                  ]
+                },
+                "id": {
+                  "type": "string",
+                  "examples": [
+                    "123e4567-e89b-12d3-a456-426614174000"
+                  ]
+                },
+                "name": {
+                  "type": "string",
+                  "examples": [
+                    "John Doe"
+                  ]
+                },
+                "phone": {
+                  "type": "string",
+                  "examples": [
+                    "+5511999999999"
+                  ]
+                }
+              },
+              "type": "object",
+              "x-apidog-orders": [
+                "email",
+                "id",
+                "name",
+                "phone"
+              ]
+            }
+          },
+          "visibility": "INHERITED",
+          "moduleId": 983654
+        },
+        {
+          "name": "presentation.UpdateUserPasswordRequest",
+          "displayName": "",
+          "id": "#/definitions/11178187",
+          "description": "",
+          "schema": {
+            "jsonSchema": {
+              "properties": {
+                "new_password": {
+                  "type": "string",
+                  "examples": [
+                    "abcd1234!"
+                  ]
+                },
+                "old_password": {
+                  "type": "string",
+                  "examples": [
+                    "abcd1234!"
+                  ]
+                }
+              },
+              "type": "object",
+              "x-apidog-orders": [
+                "new_password",
+                "old_password"
+              ]
+            }
+          },
+          "visibility": "INHERITED",
+          "moduleId": 983654
+        }
+      ]
+    }
+  ],
+  "securitySchemeCollection": [
+    {
+      "id": 882771,
+      "moduleId": 983654,
+      "name": "Root",
+      "items": [
+        {
+          "id": 431668,
+          "name": "BearerAuth",
+          "moduleId": 983654,
+          "authType": "apikey",
+          "oasAuthType": "apiKey",
+          "authConfigs": {
+            "description": "Type \"Bearer\" followed by a space and JWT token",
+            "in": "header",
+            "name": "Authorization",
+            "type": "apiKey"
+          },
+          "guidanceConfigs": {}
+        }
+      ]
+    }
+  ],
+  "requestCollection": [
+    {
+      "name": "Root",
+      "children": [],
+      "ordering": [
+        "requestFolder.8926727"
+      ],
+      "items": []
+    }
+  ],
+  "apiTestCaseCollection": [
+    {
+      "name": "Root",
+      "children": [],
+      "items": [
+        {
+          "steps": [
+            {
+              "name": "Register a new user",
+              "number": 1,
+              "type": "http",
+              "bind": false,
+              "disable": false,
+              "bindType": "API",
+              "bindId": 24665503,
+              "syncMode": "MANUAL",
+              "httpApiCase": {
+                "id": 34235392,
+                "name": "Register a new user",
+                "method": "post",
+                "path": "/auth/register",
+                "auth": {
+                  "type": "noauth",
+                  "bearer": {
+                    "token": "{{jwt_token}}"
+                  }
+                },
+                "type": "DEBUG_CASE",
+                "options": {},
+                "parameters": {
+                  "query": [],
+                  "header": [],
+                  "cookie": [],
+                  "path": []
+                },
+                "responseId": "190520347",
+                "requestBody": {
+                  "parameters": [],
+                  "type": "application/json",
+                  "data": "{\n    \"email\": \"john.doe_{{$number.int(min=0,max=1000)}}@example.com\",\n    \"name\": \"John Doe\",\n    \"password\": \"abcd1234!\",\n    \"phone\": \"+5511999999999\"\n}",
+                  "jsonSchema": {
+                    "$ref": "#/definitions/11178185"
+                  },
+                  "generateMode": "normal"
+                },
+                "preProcessors": [
+                  {
+                    "type": "placeholder",
+                    "renderType": "dynamicValueDivider",
+                    "defaultEnable": false,
+                    "enable": false
+                  }
+                ],
+                "postProcessors": [
+                  {
+                    "type": "extractor",
+                    "data": {
+                      "variableName": "user_email",
+                      "variableType": "local",
+                      "subject": "responseJson",
+                      "template": "",
+                      "expression": "$.email",
+                      "extractSettings": {
+                        "expression": "$.email",
+                        "continueExtractorSettings": {
+                          "isContinueExtractValue": false,
+                          "JsonArrayValueIndexValue": ""
+                        }
+                      }
+                    },
+                    "defaultEnable": false,
+                    "enable": true
+                  }
+                ],
+                "advancedSettings": {
+                  "disabledSystemHeaders": {},
+                  "isDefaultUrlEncoding": 3,
+                  "disableUrlEncoding": false
+                },
+                "commonParameters": {
+                  "query": [],
+                  "body": [],
+                  "header": [],
+                  "cookie": []
+                },
+                "inheritPreProcessors": {},
+                "inheritPostProcessors": {},
+                "inheritPreProcessorsSnapshot": [],
+                "inheritPostProcessorsSnapshot": [],
+                "moduleId": 983654,
+                "apiId": 24665503
+              }
+            },
+            {
+              "name": "Login user",
+              "number": 2,
+              "type": "http",
+              "bind": false,
+              "disable": false,
+              "bindType": "API",
+              "bindId": 24665500,
+              "syncMode": "MANUAL",
+              "httpApiCase": {
+                "id": 34236155,
+                "name": "Login a user",
+                "method": "post",
+                "path": "/auth/login",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": {
+                    "token": "{{jwt_token}}"
+                  }
+                },
+                "type": "DEBUG_CASE",
+                "options": {},
+                "parameters": {
+                  "query": [],
+                  "header": [],
+                  "cookie": [],
+                  "path": []
+                },
+                "responseId": "186939687",
+                "requestBody": {
+                  "parameters": [],
+                  "type": "application/json",
+                  "data": "{\n    \"email\": \"{{user_email}}\",\n    \"password\": \"abcd1234!\"\n}",
+                  "jsonSchema": {
+                    "$ref": "#/definitions/11178181"
+                  },
+                  "generateMode": "normal"
+                },
+                "preProcessors": [
+                  {
+                    "type": "placeholder",
+                    "renderType": "dynamicValueDivider",
+                    "defaultEnable": false,
+                    "enable": false
+                  }
+                ],
+                "postProcessors": [
+                  {
+                    "type": "extractor",
+                    "data": {
+                      "variableName": "access_token",
+                      "variableType": "local",
+                      "subject": "responseJson",
+                      "template": "",
+                      "expression": "$.access_token",
+                      "extractSettings": {
+                        "expression": "$.access_token",
+                        "continueExtractorSettings": {
+                          "isContinueExtractValue": false,
+                          "JsonArrayValueIndexValue": ""
+                        }
+                      },
+                      "extractRange": "partial"
+                    },
+                    "defaultEnable": false,
+                    "enable": true
+                  },
+                  {
+                    "type": "extractor",
+                    "data": {
+                      "variableName": "refresh_token",
+                      "variableType": "local",
+                      "subject": "responseJson",
+                      "template": "",
+                      "expression": "$.refresh_token",
+                      "extractSettings": {
+                        "expression": "$.refresh_token",
+                        "continueExtractorSettings": {
+                          "isContinueExtractValue": false,
+                          "JsonArrayValueIndexValue": ""
+                        }
+                      }
+                    },
+                    "defaultEnable": false,
+                    "enable": true
+                  }
+                ],
+                "advancedSettings": {
+                  "disabledSystemHeaders": {},
+                  "isDefaultUrlEncoding": 3,
+                  "disableUrlEncoding": false
+                },
+                "commonParameters": {
+                  "query": [],
+                  "body": [],
+                  "header": [],
+                  "cookie": []
+                },
+                "inheritPreProcessors": {},
+                "inheritPostProcessors": {},
+                "inheritPreProcessorsSnapshot": [],
+                "inheritPostProcessorsSnapshot": [],
+                "moduleId": 983654,
+                "apiId": 24665500
+              }
+            },
+            {
+              "name": "Update user password",
+              "number": 3,
+              "type": "http",
+              "bind": false,
+              "disable": false,
+              "bindType": "API",
+              "bindId": 24665504,
+              "syncMode": "MANUAL",
+              "httpApiCase": {
+                "id": 34236158,
+                "name": "Update user password",
+                "method": "put",
+                "path": "/auth/update-password",
+                "auth": {
+                  "type": "securityscheme"
+                },
+                "type": "DEBUG_CASE",
+                "options": {},
+                "parameters": {
+                  "query": [],
+                  "header": [],
+                  "cookie": [],
+                  "path": []
+                },
+                "responseId": "165285079",
+                "requestBody": {
+                  "parameters": [],
+                  "type": "application/json",
+                  "data": "{\n    \"new_password\": \"1234abcd!\",\n    \"old_password\": \"abcd1234!\"\n}",
+                  "jsonSchema": {
+                    "$ref": "#/definitions/11178187"
+                  },
+                  "generateMode": "normal"
+                },
+                "preProcessors": [
+                  {
+                    "type": "placeholder",
+                    "renderType": "dynamicValueDivider",
+                    "defaultEnable": false,
+                    "enable": false
+                  }
+                ],
+                "postProcessors": [
+                  {
+                    "type": "extractor",
+                    "data": {
+                      "variableName": "",
+                      "variableType": "local",
+                      "subject": "responseJson",
+                      "template": "",
+                      "expression": "",
+                      "extractSettings": {
+                        "expression": "",
+                        "continueExtractorSettings": {
+                          "isContinueExtractValue": false,
+                          "JsonArrayValueIndexValue": ""
+                        }
+                      }
+                    },
+                    "defaultEnable": false,
+                    "enable": true
+                  }
+                ],
+                "advancedSettings": {
+                  "disabledSystemHeaders": {},
+                  "isDefaultUrlEncoding": 3,
+                  "disableUrlEncoding": false
+                },
+                "commonParameters": {
+                  "query": [],
+                  "body": [],
+                  "header": [],
+                  "cookie": []
+                },
+                "inheritPreProcessors": {},
+                "inheritPostProcessors": {},
+                "inheritPreProcessorsSnapshot": [],
+                "inheritPostProcessorsSnapshot": [],
+                "moduleId": 983654,
+                "apiId": 24665504
+              }
+            },
+            {
+              "name": "Refresh access token",
+              "number": 6,
+              "type": "http",
+              "bind": false,
+              "disable": false,
+              "bindType": "API",
+              "bindId": 24665502,
+              "syncMode": "MANUAL",
+              "httpApiCase": {
+                "id": 34236876,
+                "name": "Refresh access token",
+                "method": "post",
+                "path": "/auth/refresh",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": {
+                    "token": "{{jwt_token}}"
+                  }
+                },
+                "type": "DEBUG_CASE",
+                "options": {},
+                "parameters": {
+                  "query": [],
+                  "header": [],
+                  "cookie": [],
+                  "path": []
+                },
+                "responseId": "141188845",
+                "requestBody": {
+                  "parameters": [],
+                  "type": "application/json",
+                  "data": "{\n    \"refresh_token\": \"{{refresh_token}}\"\n}",
+                  "jsonSchema": {
+                    "$ref": "#/definitions/11178183"
+                  },
+                  "generateMode": "normal"
+                },
+                "preProcessors": [
+                  {
+                    "type": "placeholder",
+                    "renderType": "dynamicValueDivider",
+                    "defaultEnable": false,
+                    "enable": false
+                  }
+                ],
+                "postProcessors": [],
+                "advancedSettings": {
+                  "disabledSystemHeaders": {},
+                  "isDefaultUrlEncoding": 1
+                },
+                "commonParameters": {
+                  "query": [],
+                  "body": [],
+                  "header": [],
+                  "cookie": []
+                },
+                "inheritPreProcessors": {},
+                "inheritPostProcessors": {},
+                "inheritPreProcessorsSnapshot": [],
+                "inheritPostProcessorsSnapshot": [],
+                "moduleId": 983654,
+                "apiId": 24665502
+              }
+            },
+            {
+              "name": "Logout user",
+              "number": 4,
+              "type": "http",
+              "bind": false,
+              "disable": false,
+              "bindType": "API",
+              "bindId": 24665501,
+              "syncMode": "MANUAL",
+              "httpApiCase": {
+                "id": 34236829,
+                "name": "Logout a user",
+                "method": "delete",
+                "path": "/auth/logout",
+                "auth": {
+                  "type": "securityscheme"
+                },
+                "type": "DEBUG_CASE",
+                "options": {},
+                "parameters": {
+                  "query": [],
+                  "header": [],
+                  "cookie": [],
+                  "path": []
+                },
+                "responseId": "112398927",
+                "requestBody": {
+                  "parameters": [],
+                  "type": "none",
+                  "data": "",
+                  "generateMode": "normal"
+                },
+                "preProcessors": [
+                  {
+                    "type": "placeholder",
+                    "renderType": "dynamicValueDivider",
+                    "defaultEnable": false,
+                    "enable": false
+                  }
+                ],
+                "postProcessors": [],
+                "advancedSettings": {
+                  "disabledSystemHeaders": {},
+                  "isDefaultUrlEncoding": 3,
+                  "disableUrlEncoding": false
+                },
+                "commonParameters": {
+                  "query": [],
+                  "body": [],
+                  "header": [],
+                  "cookie": []
+                },
+                "inheritPreProcessors": {},
+                "inheritPostProcessors": {},
+                "inheritPreProcessorsSnapshot": [],
+                "inheritPostProcessorsSnapshot": [],
+                "moduleId": 983654,
+                "apiId": 24665501
+              }
+            },
+            {
+              "name": "Refresh access token error",
+              "number": 5,
+              "type": "http",
+              "bind": false,
+              "disable": false,
+              "bindType": "API",
+              "bindId": 24665502,
+              "syncMode": "MANUAL",
+              "httpApiCase": {
+                "id": 34236828,
+                "name": "Refresh access token",
+                "method": "post",
+                "path": "/auth/refresh",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": {
+                    "token": "{{jwt_token}}"
+                  }
+                },
+                "type": "DEBUG_CASE",
+                "options": {},
+                "parameters": {
+                  "query": [],
+                  "header": [],
+                  "cookie": [],
+                  "path": []
+                },
+                "responseId": "169608372",
+                "requestBody": {
+                  "parameters": [],
+                  "type": "application/json",
+                  "data": "{\n    \"refresh_token\": \"{{refres_token}}\"\n}",
+                  "jsonSchema": {
+                    "$ref": "#/definitions/11178183"
+                  },
+                  "generateMode": "normal"
+                },
+                "preProcessors": [
+                  {
+                    "type": "placeholder",
+                    "renderType": "dynamicValueDivider",
+                    "defaultEnable": false,
+                    "enable": false
+                  }
+                ],
+                "postProcessors": [],
+                "advancedSettings": {
+                  "disabledSystemHeaders": {},
+                  "isDefaultUrlEncoding": 3,
+                  "disableUrlEncoding": false
+                },
+                "commonParameters": {
+                  "query": [],
+                  "body": [],
+                  "header": [],
+                  "cookie": []
+                },
+                "inheritPreProcessors": {},
+                "inheritPostProcessors": {},
+                "inheritPreProcessorsSnapshot": [],
+                "inheritPostProcessorsSnapshot": [],
+                "moduleId": 983654,
+                "apiId": 24665502
+              }
+            }
+          ],
+          "id": 1562706,
+          "name": "Auth",
+          "tags": [],
+          "options": {},
+          "priority": 2,
+          "ordering": 10,
+          "description": "",
+          "preProcessors": [],
+          "postProcessors": [],
+          "children": [],
+          "performanceTestOptions": {},
+          "apiTestDataSets": []
+        }
+      ]
+    }
+  ],
+  "testCaseReferences": [],
+  "environments": [
+    {
+      "name": "Develop Env",
+      "websocketBaseUrls": {},
+      "requestProxyAgentSettings": {},
+      "variables": [],
+      "parameters": {
+        "cookie": [],
+        "query": [],
+        "header": [],
+        "body": []
+      },
+      "type": "normal",
+      "visibility": "protected",
+      "ordering": 0,
+      "tags": [
+        {
+          "name": "",
+          "color": "#9373EE"
+        }
+      ],
+      "id": "5221317",
+      "baseUrl": "http://localhost:8080/api",
+      "baseUrls": {
+        "default": "http://localhost:8080/api"
+      }
+    }
+  ],
+  "commonScripts": [],
+  "databaseConnections": [],
+  "globalVariables": [],
+  "commonParameters": null,
+  "projectSetting": {
+    "id": "1135942",
+    "auth": {},
+    "securityScheme": {},
+    "gateway": [],
+    "language": "en-US",
+    "apiStatuses": [
+      "developing",
+      "testing",
+      "released",
+      "deprecated"
+    ],
+    "mockSettings": {},
+    "preProcessors": [],
+    "postProcessors": [],
+    "advancedSettings": {
+      "enableJsonc": false,
+      "enableBigint": false,
+      "responseValidate": true,
+      "enableTestScenarioSetting": false,
+      "enableYAPICompatScript": false,
+      "isDefaultUrlEncoding": 3,
+      "publishedDocUrlRules": {
+        "defaultRule": "SLUGIFY_WITH_RESOURCE_KEY",
+        "resourceKeyStandard": "NEW"
+      }
+    },
+    "initialDisabledMockIds": [],
+    "servers": [
+      {
+        "id": "default",
+        "name": "Default Server"
+      }
+    ],
+    "cloudMock": {
+      "security": "free",
+      "enable": false,
+      "tokenKey": "apidogToken"
+    }
+  },
+  "customFunctions": [],
+  "projectTestCaseCategories": [
+    {
+      "id": 572516,
+      "name": "Positive",
+      "description": "Valid inputs and correct expected results, representing typical usage."
+    },
+    {
+      "id": 572517,
+      "name": "Negative",
+      "description": "Negative, invalid inputs such as missing fields, wrong types, unsupported methods, etc."
+    },
+    {
+      "id": 572518,
+      "name": "Boundary",
+      "description": "Extreme or edge conditions, such as maximum string length, empty values, zero, null, etc."
+    },
+    {
+      "id": 572519,
+      "name": "Security",
+      "description": "Test cases that may expose API security risks."
+    },
+    {
+      "id": 572520,
+      "name": "Other",
+      "description": "Test cases not classified under existing categories."
+    }
+  ],
+  "projectTestCaseTags": [
+    {
+      "id": 1410925,
+      "name": "Required Fields Only",
+      "description": "Send only the required fields with valid values, omitting all optional fields, to test minimal valid requests."
+    },
+    {
+      "id": 1410926,
+      "name": "Valid Semantic",
+      "description": "Use values that are syntactically correct and also make sense in the business logic or domain context."
+    },
+    {
+      "id": 1410927,
+      "name": "Enum Combination Coverage",
+      "description": "For all enum-type parameters, apply orthogonal design to systematically construct test case combinations of parameters and their enum values, dedicated to testing enum coverage."
+    },
+    {
+      "id": 1410928,
+      "name": "Other Positive Case",
+      "description": "Provide realistic and valid inputs that match the API specification, producing the correct and expected result."
+    },
+    {
+      "id": 1410929,
+      "name": "Missing Required Fields",
+      "description": "Omit one or more required fields in the request body or parameters."
+    },
+    {
+      "id": 1410930,
+      "name": "Invalid Values",
+      "description": "Provide values that are within the correct type and format, but logically invalid for the field."
+    },
+    {
+      "id": 1410931,
+      "name": "Type Errors",
+      "description": "Use values with incorrect data types, such as sending a string instead of an integer."
+    },
+    {
+      "id": 1410932,
+      "name": "Format Errors",
+      "description": "Provide values in an incorrect format, e.g., wrong date pattern, malformed email address."
+    },
+    {
+      "id": 1410933,
+      "name": "Semantic Errors",
+      "description": "Use syntactically correct and properly formatted values that are logically impossible or violate domain rules."
+    },
+    {
+      "id": 1410934,
+      "name": "Other Negative Case",
+      "description": "Provide invalid or unexpected inputs that should trigger error handling or rejection by the API."
+    },
+    {
+      "id": 1410935,
+      "name": "Null",
+      "description": "Must be the JSON literal `null` (not empty, not \"null\")."
+    },
+    {
+      "id": 1410936,
+      "name": "Zero",
+      "description": "Must be the numeric literal 0."
+    },
+    {
+      "id": 1410937,
+      "name": "Empty Values",
+      "description": "Must be \"\"."
+    },
+    {
+      "id": 1410938,
+      "name": "Max Values",
+      "description": "Provide the exact minimum and maximum allowed values for numeric or date fields."
+    },
+    {
+      "id": 1410939,
+      "name": "Min Values",
+      "description": "Provide the exact minimum and maximum allowed values for numeric or date fields."
+    },
+    {
+      "id": 1410940,
+      "name": "Overflow",
+      "description": "Provide values just beyond the allowed minimum or maximum boundaries."
+    },
+    {
+      "id": 1410941,
+      "name": "Underflow",
+      "description": "Provide values just beyond the allowed minimum or maximum boundaries."
+    },
+    {
+      "id": 1410942,
+      "name": "Overly Long Strings",
+      "description": "Provide strings longer than the maximum allowed length, or shorter than the minimum required length."
+    },
+    {
+      "id": 1410943,
+      "name": "Overly Short Strings",
+      "description": "Provide strings longer than the maximum allowed length, or shorter than the minimum required length."
+    },
+    {
+      "id": 1410944,
+      "name": "Broken Object Level Authorization",
+      "description": "Users access or manipulate data objects without proper authorization."
+    },
+    {
+      "id": 1410945,
+      "name": "Access Control",
+      "description": "Restricting resources and actions users can access based on roles, permissions, or attributes."
+    },
+    {
+      "id": 1410946,
+      "name": "Auth Failures",
+      "description": "Authentication is weak, misconfigured, or bypassed, allowing unauthorized access."
+    },
+    {
+      "id": 1410947,
+      "name": "SQL Injection",
+      "description": "Insert malicious SQL code into input fields to test for SQL injection vulnerabilities."
+    },
+    {
+      "id": 1410948,
+      "name": "XSS Injection",
+      "description": "Inject JavaScript or HTML tags to test for cross-site scripting vulnerabilities."
+    },
+    {
+      "id": 1410949,
+      "name": "Fuzzy Input",
+      "description": "Send large or randomly generated payloads to test input validation and stability."
+    },
+    {
+      "id": 1410950,
+      "name": "Command Injection",
+      "description": "Insert shell commands into inputs to test for command execution vulnerabilities."
+    },
+    {
+      "id": 1410951,
+      "name": "JSON Injection",
+      "description": "Insert malicious or unexpected JSON structures to test parsing and validation."
+    },
+    {
+      "id": 1410952,
+      "name": "NoSQL Injection",
+      "description": "Provide NoSQL-specific malicious queries or operators to test for injection vulnerabilities."
+    },
+    {
+      "id": 1410953,
+      "name": "Other",
+      "description": "Test cases not classified under existing categories."
+    }
+  ],
+  "projectAssociations": [],
+  "moduleSettings": [
+    {
+      "id": "983654",
+      "name": "Default module",
+      "description": "API for the Ipanema Box project",
+      "moduleVariables": [],
+      "openApiInfo": {}
+    }
+  ]
+}
